@@ -58,7 +58,6 @@
       <a href="/nerve/releases">Releases</a>
       <a href="/nerve/feedback">Feedback</a>
       <a href="/nerve/privacy">Privacy</a>
-      <a href="/nerve/terms">Terms</a>
     </nav>
   </div>
 
@@ -70,9 +69,8 @@
         <span class="alpha-badge">Free Alpha</span>
       </div>
       <p class="page-lede">
-        Do these in order. Steps 1 to 5 install the software; steps 6 to 8 connect your own AI
-        account; steps 9 and 10 run and end a session. Skipping ahead is the most common cause of
-        a setup that will not connect.
+        Follow these steps in order to avoid setup conflicts. Steps 1 to 5 install the software,
+        steps 6 to 8 connect your own AI account, and steps 9 and 10 run and end a session.
       </p>
 
       <nav class="toc" aria-labelledby="toc-h">
@@ -92,7 +90,7 @@
         <ul>
           <li>A Windows GM host — <span data-rel="platform">Windows 10 / 11 (64-bit)</span>. The companion runs on the machine hosting the campaign.</li>
           <li>Fantasy Grounds Unity running the <span data-rel="rulesetShort">5E</span> ruleset.</li>
-          <li>The Nerve extension, installed through the Forge. <strong>The extension on its own provides no AI service.</strong></li>
+          <li>The Nerve extension, installed through the Forge. <strong>The extension on its own provides no AI service</strong>, and it has not been released yet — see <a href="/nerve/downloads">release status</a>.</li>
           <li>The separate Nerve Windows companion.</li>
           <li>Node.js <span data-rel="nodeMinimum">22</span> or newer.</li>
           <li>A compatible external AI application and account. <strong>AI access, allowance and costs are not included with Nerve</strong> — your provider bills you, not us.</li>
@@ -166,14 +164,33 @@
             campaign to attach to and what role to configure. Answer with the test campaign from
             step 1.
           </p>
+          <div class="callout callout--accent">
+            <span class="callout-title">Leave the installer open</span>
+            <p>
+              The installer may pause and ask you to load the extension and campaign in Fantasy
+              Grounds before it can finish. That is expected. <strong>Do not close it.</strong>
+              When it prompts, carry out step 5 in Fantasy Grounds, then come back to this window
+              and let the installer complete. Steps 4 and 5 overlap by design — you are not
+              waiting for one to finish before starting the other.
+            </p>
+          </div>
         </li>
 
         <li>
           <h3>Enable Nerve Adapter in Fantasy Grounds and confirm the version</h3>
           <p>
             Launch Fantasy Grounds, enable the <strong>Nerve Adapter</strong> extension for your
-            campaign, load the campaign, and confirm the version it reports matches the companion
-            you installed. Mismatched halves are the second most common setup failure.
+            campaign and load the campaign. If the installer from step 4 is waiting on you, this
+            is the moment it is waiting for — do this, then return to it.
+          </p>
+          <p>
+            Fantasy Grounds announces the adapter on load. Expect:
+            <code data-rel="fguAnnouncement">Nerve Adapter v0.67.1 loaded.</code>
+            The extension and the runtime both report a bare version number
+            (<code data-rel="extensionVersion">0.67.1</code>); <em>alpha</em> is the release
+            channel and the download filename suffix, not part of what Fantasy Grounds prints.
+            Confirm it matches the companion you installed — mismatched halves cause connection
+            and compatibility errors.
           </p>
         </li>
 
@@ -211,8 +228,9 @@
             play on an untested connection.
           </p>
           <p>
-            Tests and gameplay both consume your provider allowance. Nerve does not meter, cap or
-            pay for that.
+            Tests and gameplay both consume your provider allowance. Provider charges and account
+            limits are controlled by your provider: Nerve does not include an AI allowance or
+            guarantee a spending cap for signed-in application usage.
           </p>
         </li>
 
@@ -220,8 +238,10 @@
           <h3>Start Nerve and begin a session</h3>
           <p>
             Start Nerve to open a tracked session. <strong>New tracked sessions default to Flow
-            Mode.</strong> If you would rather approve each action yourself, switch to manual
-            approval before you play rather than during a scene.
+            Mode.</strong> In Flow Mode, supported narration, proxy actions and pacing can run
+            automatically, including supported exact-source encounters; guarded actions still
+            require your approval. If you would rather approve more of it yourself, switch to
+            manual approval before you play rather than during a scene.
           </p>
           <p>
             You can stop the connector at any time. <strong>Stop Nerve cancels what is in flight —
@@ -363,7 +383,7 @@
             <tr>
               <th scope="row">Response is slow, or times out</th>
               <td>Provider latency, or a request that has already failed.</td>
-              <td>Built-in listeners normally time out after three minutes. Wait it out rather than clicking Call Nerve again — repeat clicks queue more work, they do not speed anything up.</td>
+              <td>Built-in listeners normally time out after three minutes. Wait it out rather than clicking Call Nerve again — avoid repeated Call Nerve clicks while responding; they do not speed up the current request.</td>
             </tr>
             <tr>
               <th scope="row"><code>APP_LISTENER_PROTOCOL_FAILED</code></th>
@@ -378,7 +398,7 @@
             <tr>
               <th scope="row">Stop Nerve did not undo what happened</th>
               <td>Working as designed.</td>
-              <td><strong>Stop Nerve cancels in-flight work; it is not an undo.</strong> Correct campaign records manually, checking first so you do not double-apply a change.</td>
+              <td><strong>Stop Nerve cancels in-flight work; it is not an undo.</strong> Check the native record first, then correct it manually — correcting without checking may duplicate an update that already applied.</td>
             </tr>
           </tbody>
         </table>
@@ -405,8 +425,7 @@
       <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
       <nav aria-label="Footer">
         <a href="/nerve/privacy">Privacy</a>
-        <a href="/nerve/terms">Terms</a>
-        <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+          <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
       </nav>
     </div>
   </footer>
