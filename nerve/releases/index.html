@@ -58,7 +58,6 @@
       <a href="/nerve/releases" aria-current="page">Releases</a>
       <a href="/nerve/feedback">Feedback</a>
       <a href="/nerve/privacy">Privacy</a>
-      <a href="/nerve/terms">Terms</a>
     </nav>
   </div>
 
@@ -77,8 +76,9 @@
       <h2 id="pairing">Version pairing</h2>
       <p>
         The Fantasy Grounds extension and the Windows companion are versioned together. Running
-        one half ahead of the other is a supported way to get confusing behaviour, so check this
-        table before updating either.
+        one half ahead of the other can cause connection or compatibility errors, so check this
+        table before updating either. Both report a bare version number; <em>alpha</em> is the
+        release channel and the download filename suffix.
       </p>
 
       <div class="table-wrap">
@@ -94,10 +94,10 @@
           </thead>
           <tbody>
             <tr>
-              <th scope="row" data-rel="version">0.67.1-alpha</th>
-              <td data-rel="extensionVersion">0.67.1-alpha</td>
+              <th scope="row" data-rel="versionLabel">0.67.1 (alpha)</th>
+              <td data-rel="extensionVersion">0.67.1</td>
               <td data-rel="companion.filename">Nerve-Windows-Companion-0.67.1-alpha.zip</td>
-              <td><span class="status status--pending" data-rel-status="companion">Pending owner approval</span></td>
+              <td><span class="status status--available" data-rel-status="companion">Available now</span></td>
             </tr>
           </tbody>
         </table>
@@ -105,21 +105,21 @@
 
       <hr class="rule" />
 
-      <h2 id="current"><span data-rel="version">0.67.1-alpha</span> — release candidate</h2>
+      <h2 id="current"><span data-rel="versionLabel">0.67.1 (alpha)</span></h2>
       <p style="font-family:var(--mono);font-size:13px;color:var(--text-faint)">
-        <span data-rel="releaseDateLabel">not yet published</span>
+        <span data-rel="releaseDateLabel">11 September 2026</span>
         · <span data-rel="platform">Windows 10 / 11 (64-bit)</span>
         · <span data-rel="ruleset">Fantasy Grounds Unity — 5E</span>
       </p>
 
-      <div class="callout callout--pending">
-        <span class="callout-title">Not yet a public release</span>
+      <div class="callout callout--warn" data-rel-when="forge:not">
+        <span class="callout-title">Companion published, extension pending</span>
         <p>
-          This version is a <strong>candidate</strong>. The product owner has to approve the
-          actual public release and its artifacts before any download link here goes live. The
-          installer ownership fix is implemented and tested offline; Forge moderation, download
-          and update delivery, and clean-profile public installation have <strong>not</strong>
-          been validated yet, and this page will not imply otherwise.
+          The Windows companion for this version is available on the
+          <a href="/nerve/downloads">downloads page</a>. The Fantasy Grounds extension has not
+          been released yet, so this version cannot be run end to end. Forge moderation and
+          clean-profile public installation have <strong>not</strong> been validated, and this
+          page will not imply otherwise.
         </p>
       </div>
 
@@ -129,7 +129,7 @@
         <li>Fantasy Grounds Unity running the <span data-rel="rulesetShort">5E</span> ruleset.</li>
         <li>Node.js <span data-rel="nodeMinimum">22</span> or newer.</li>
         <li>A compatible external AI application and account. Not included, not billed by us.</li>
-        <li>Matching extension version <span data-rel="extensionVersion">0.67.1-alpha</span> from the Forge.</li>
+        <li>Matching extension version <span data-rel="extensionVersion">0.67.1</span> from the Forge — not yet released.</li>
       </ul>
 
       <h3>Changes in this candidate</h3>
@@ -144,8 +144,9 @@
           actually changed. Check the native record.
         </li>
         <li>
-          Inventory, payment and reward transactions are not a complete workflow. Verify before
-          correcting anything manually, or you will double-apply the change.
+          Inventory, payment and reward transactions are not a complete workflow. Check the record
+          before correcting anything manually — an unchecked correction may duplicate an update
+          that already applied.
         </li>
         <li>
           Quest completion can be updated through supported actions, but completion is not
@@ -157,8 +158,8 @@
           is not evidence of subscription throttling.
         </li>
         <li>
-          Built-in listeners normally time out after three minutes. Repeated Call Nerve clicks
-          while a response is in flight do not help.
+          Built-in listeners normally time out after three minutes. Avoid repeated Call Nerve
+          clicks while responding; they do not speed up the current request.
         </li>
         <li>
           Story Cues supply reference context only. They do not move characters and do not
@@ -186,11 +187,62 @@
 
       <hr class="rule" />
 
+      <h2 id="providers">Provider coverage in this release</h2>
+      <p>
+        This table records <strong>how much testing each integration has had</strong>. It is not a
+        ranking of provider quality, and it is not a recommendation to buy or upgrade anything.
+        Nerve needs a local integration with the provider application — being logged in to a
+        provider's website in your browser is not the same thing and does not establish the
+        listener connection.
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <caption>Testing coverage, September 2026</caption>
+          <thead>
+            <tr>
+              <th scope="col">Integration</th>
+              <th scope="col">How it connects</th>
+              <th scope="col">Coverage so far</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Signed-in provider applications</th>
+              <td>Selected in Nerve Control → AI Setup, which launches the provider's own application and uses its sign-in.</td>
+              <td>Exercised in solo local testing. Behaviour varies between providers.</td>
+            </tr>
+            <tr>
+              <th scope="row">Custom application</th>
+              <td>Configured with <code>Configure-Nerve-Custom-App.cmd</code> in the companion package.</td>
+              <td>Lightly exercised. Expect to do your own configuration work.</td>
+            </tr>
+            <tr>
+              <th scope="row">Browser chat login on its own</th>
+              <td><strong>Not a connection method.</strong> Nerve cannot reach a provider this way.</td>
+              <td>Not applicable — see <a href="/nerve/setup#install">setup step 7</a>.</td>
+            </tr>
+            <tr>
+              <th scope="row">Multiplayer sessions</th>
+              <td>Same connection as solo; the difference is table size and traffic.</td>
+              <td>Incomplete. We are not publishing multiplayer guidance we have not tested.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        We have not run enough comparable trials to rank providers against each other, so we are
+        not going to. If a specific integration behaves badly for you, that is exactly the kind of
+        thing worth <a href="/nerve/feedback">telling us about</a>.
+      </p>
+
+      <hr class="rule" />
+
       <h2 id="history">Earlier releases</h2>
       <p>
-        There are no earlier <em>public</em> releases. Developer-preview builds circulated
-        privately during development and are not published here; if you are running one, treat
-        the migration steps above as required rather than optional.
+        <span data-rel="versionLabel">0.67.1 (alpha)</span> is the first public companion release.
+        Developer-preview builds circulated privately during development and are not published
+        here; if you are running one, treat the migration steps above as required rather than
+        optional.
       </p>
       <p>
         Once releases are published, each approved version keeps its own permanent, versioned
@@ -213,8 +265,7 @@
       <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
       <nav aria-label="Footer">
         <a href="/nerve/privacy">Privacy</a>
-        <a href="/nerve/terms">Terms</a>
-        <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+          <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
       </nav>
     </div>
   </footer>
