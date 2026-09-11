@@ -4,6 +4,16 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/drafts/:path*",
+      "destination": "/nerve",
+      "permanent": false
+    },
+    {
+      "source": "/nerve/terms",
+      "destination": "/nerve/privacy",
+      "permanent": false
+    },
+    {
       "source": "/HANDOFF.md",
       "destination": "/nerve",
       "permanent": false
@@ -50,6 +60,19 @@
     }
   ],
   "headers": [
+    {
+      "source": "/downloads/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment"
+        }
+      ]
+    },
     {
       "source": "/assets/(.*)",
       "headers": [

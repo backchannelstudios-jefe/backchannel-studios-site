@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /nerve/terms
+Disallow: /drafts/
 Disallow: /api/
 Disallow: /tools/
 Disallow: /HANDOFF.md

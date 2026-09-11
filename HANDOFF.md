@@ -1,11 +1,12 @@
 # Nerve site — implementation handoff
 
-Built against **Nerve Alpha Website — Development Requirements** (10 September 2026),
-release candidate 0.67.1-alpha.
+Built against **Nerve Alpha Website — Development Requirements** (10 September 2026) and the
+**Nerve website review** (11 September 2026). Current release: **0.67.1 (alpha)**.
 
-**Nothing on these pages claims the release is published.** Every download control renders as a
-non-clickable, disabled element until you approve the artifacts. That is deliberate and enforced
-by a build-time check.
+**The Windows companion is published; the Fantasy Grounds extension is not.** Nerve needs both
+halves, so the site frames this as a release preview throughout and does not imply a working
+setup is possible yet. The Forge control stays a non-clickable disabled element until its URL
+exists — enforced at build time, not by convention.
 
 ---
 
@@ -17,9 +18,10 @@ by a build-time check.
 | `/nerve/setup` | Ten-step ordered install, update paths, developer-preview migration, troubleshooting table |
 | `/nerve/downloads` | Prerequisites, current release metadata, companion + checksum + Forge controls, previous releases |
 | `/nerve/releases` | Version pairing table, per-release known issues, update instructions |
-| `/nerve/feedback` | Bug / Suggestion / Performance form with server-side validation |
 | `/nerve/privacy` | Product data flow and website data collection, kept strictly apart |
-| `/nerve/terms` | Structural draft — **`noindex`, not for publication** until you supply wording |
+| `/nerve/feedback` | Email report route with a what-to-include checklist; the form is built but hidden until a destination exists |
+| `downloads/nerve/<ver>/` | The published companion ZIP and its generated `.sha256` sidecar |
+| `drafts/` | Unpublished work — currently the Terms draft. Redirected away, robots-disallowed |
 | `/api/feedback` | Vercel serverless intake for the form |
 | `nerve/release.json` | Single source of truth for every version, filename, checksum and link |
 | `tools/*.mjs` | Release stamper, pre-publication checker, endpoint test suite |
@@ -48,60 +50,71 @@ dashboard. Nothing about this change makes rollback harder.
 
 ---
 
-## 3. Editing release data — the one file that matters
+## 3. Publishing a new companion build — three steps
 
-Never type a version number into an HTML file. Edit **`nerve/release.json`** and push; the build
-rewrites every page. When you are ready to publish the companion:
+Never type a version number, a file size or a checksum into an HTML file. Everything comes from
+**`nerve/release.json`**.
 
-```jsonc
-"releaseDate": "2026-09-25",
-"releaseDateLabel": "25 September 2026",
-"companion": {
-  "status": "available",                              // was "pending"
-  "filename": "Nerve-Windows-Companion-0.67.1-alpha.zip",
-  "url": "https://<your-storage>/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip",
-  "sizeLabel": "1.1 MB",
-  "sha256": "<64 hex chars, calculated from the file you actually hosted>",
-  "checksumUrl": "https://<your-storage>/nerve/0.67.1-alpha/…zip.sha256"
-},
-"forge": { "status": "available", "url": "https://forge.fantasygrounds.com/shop/items/…" }
-```
+1. **Upload the ZIP** to `downloads/nerve/<version>-<channel>/` on GitHub.
+   Always a new folder. Never replace a file at a path that has already been published — people
+   may have linked to it, and a changed file under an old URL breaks checksum verification.
+2. **Edit four fields** in `nerve/release.json`: `version`, `channel`, `releaseDate`, and
+   `companion.path` (pointing at the file you just uploaded).
+3. **Commit.** Done.
 
-The build **fails loudly** rather than publishing something misleading if you mark an artifact
-`available` without an `https://` URL, a valid 64-character SHA-256, a checksum URL, a file size,
-or a release date. A link is only ever rendered as clickable when its status is `available` *and*
-its URL is https. Flipping back to `pending` restores the disabled controls exactly — it round-trips
-byte-for-byte, so a premature publish is a one-line revert.
+On deploy, `npm run build` opens the ZIP and works out the rest itself:
 
-Use immutable versioned paths. Do not replace bytes at a URL you have already published.
+| Derived automatically | From |
+| --- | --- |
+| SHA-256 digest | hashing the actual ZIP in the repo |
+| File size, and its label (`1.19 MB`) | the real byte length |
+| Download URL and filename | `companion.path` |
+| The `.sha256` sidecar file | written next to the ZIP |
+| `0.67.1 (alpha)` version label | `version` + `channel` |
+| `Nerve Adapter v0.67.1 loaded.` | `extensionVersion` |
+| `11 September 2026` date | `releaseDate` |
 
----
+Because the digest is taken from the same bytes Vercel serves, **the published checksum cannot
+drift from the published file.** `npm run check` re-verifies this independently and fails if the
+number on the page, the sidecar and the file ever disagree — I tested that guard by deliberately
+corrupting each one.
 
-## 4. Before the feedback form can go live — owner input required
+The build refuses to publish, and fails the deploy, if the ZIP is missing, if the version string
+does not appear in the filename (the classic "new build, forgot the version bump"), or if a
+status is `available` without what that status requires. A failed build leaves the previous
+deployment serving, so a mistake here cannot take the site down.
 
-The form is built and tested, but **not connected**, and the pages say so plainly. Three things
-are needed:
+**To unpublish**, set `companion.status` back to `"pending"`. The download reverts to a
+non-clickable disabled control and the pages round-trip byte-for-byte.
 
-1. **A destination.** Set these in Vercel → Project → Settings → Environment Variables:
-   - `RESEND_API_KEY` — an API key from resend.com (or swap `deliver()` in `api/feedback.js` for
-     another provider; it is about 25 lines)
+**When the Forge item is approved**, set `forge.status` to `"available"` and paste the URL into
+`forge.url`. That one change also removes the "release preview" warnings from the overview,
+downloads and releases pages, because they are conditional on the Forge still being pending.
+
+## 4. Turning the feedback form on
+
+The form and its endpoint are built, tested and sitting in the repo, but **the page currently
+shows an email route instead** — a tester is not asked to fill in twenty fields only to be told
+the endpoint is off. To switch over:
+
+1. Set these in Vercel → Project → Settings → Environment Variables:
+   - `RESEND_API_KEY` — an API key from resend.com (or swap the ~25-line `deliver()` function in
+     `api/feedback.js` for another provider)
    - `FEEDBACK_TO` — the inbox reports land in
    - `FEEDBACK_FROM` — a verified sender, e.g. `Nerve Feedback <feedback@thebackchannel.studio>`
+2. Set `feedback.formEnabled` to `true` in `nerve/release.json`.
+3. Update the "What happens to a feedback report" section of `/nerve/privacy` to say where
+   reports are stored and how long they are kept. Do this **before** step 2, not after.
 
-   Until these exist the endpoint returns a clear 503 and points testers at the studio email. It
-   does **not** silently accept and drop reports.
+Send one real report and confirm it arrives before telling testers the form works.
 
-2. **Approved privacy wording** for where reports are stored, who can read them, how long they are
-   kept, and how someone asks for deletion. The placeholders on `/nerve/privacy` are marked with a
-   dashed amber box. No retention period or response-time promise was invented.
+## 4b. The Terms page
 
-3. **Approved terms wording.** `/nerve/terms` lists the sections a lawyer needs to fill
-   (licence grant, ownership, feedback licence, warranty, liability, acceptable use, governing law,
-   the legal entity). The page is `noindex` and disallowed in `robots.txt` until then.
-
-Search the repo for `owner-input` to find every block that needs your sign-off.
-
----
+`/nerve/terms` is no longer published. The review was right that a public page saying it should
+not be public is worse than no page. The draft now lives at
+`drafts/nerve-terms-draft.html.txt` — redirected away and disallowed in `robots.txt` — and
+`drafts/README.md` lists exactly what a lawyer needs to supply and the steps to publish it.
+`/nerve/terms` redirects to `/nerve/privacy` so any existing link still lands somewhere useful.
 
 ## 5. Test report
 
