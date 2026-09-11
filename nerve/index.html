@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nerve — Free Alpha | Backchannel Studios</title>
+  <meta name="description" content="Nerve connects a compatible AI application to your Fantasy Grounds campaign for narration, scene references, session continuity, prompts and rolls. Free during alpha. Bring your own AI account." />
+  <link rel="canonical" href="https://www.thebackchannel.studio/nerve" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/mark-32.png" />
+  <link rel="apple-touch-icon" href="/assets/mark-180.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0b0d" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Backchannel Studios" />
+  <meta property="og:title" content="Nerve — Free Alpha" />
+  <meta property="og:description" content="AI assistance for your Fantasy Grounds campaign. Free during alpha. Bring your own compatible AI account." />
+  <meta property="og:url" content="https://www.thebackchannel.studio/nerve" />
+  <meta property="og:image" content="https://www.thebackchannel.studio/assets/og-nerve.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Nerve AI emblem beside the words Nerve, Free Alpha, from Backchannel Studios." />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="/"><img src="/assets/mark-96.png" width="30" height="30" alt="" />BACKCHANNEL.</a>
+      <div class="nav-links">
+        <a href="/#services">Services</a>
+        <a href="/projects">Projects</a>
+        <a href="/nerve">Nerve</a>
+        <a href="/#about">About</a>
+        <a href="/#contact">Contact</a>
+      </div>
+      <a class="nav-cta" href="/#contact">Get in Touch</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="subnav">
+    <nav class="subnav-inner" aria-label="Nerve pages">
+      <a href="/nerve" aria-current="page">Overview</a>
+      <a href="/nerve/setup">Setup</a>
+      <a href="/nerve/downloads">Downloads</a>
+      <a href="/nerve/releases">Releases</a>
+      <a href="/nerve/feedback">Feedback</a>
+      <a href="/nerve/privacy">Privacy</a>
+      <a href="/nerve/terms">Terms</a>
+    </nav>
+  </div>
+
+  <main id="main">
+
+    <!-- 1. NAME, ALPHA LABEL, VALUE STATEMENT, CURRENT RELEASE -->
+    <div class="product-hero">
+      <div>
+        <div class="title-row">
+          <h1>Nerve</h1>
+          <span class="alpha-badge">Free Alpha</span>
+        </div>
+        <p class="lede">
+          Nerve connects AI assistance to your Fantasy Grounds campaign for narration, scene
+          references, session continuity, prompts, rolls and supported actions. Free during alpha.
+          Bring your own compatible AI account and help shape the product through feedback.
+        </p>
+        <p class="release-line">
+          Release candidate <strong data-rel="version">0.67.1-alpha</strong>
+          · <strong data-rel="platform">Windows 10 / 11 (64-bit)</strong>
+          · <strong data-rel="ruleset">Fantasy Grounds Unity — 5E</strong>
+        </p>
+
+        <!-- 2. PRIMARY AND SECONDARY ACTIONS -->
+        <div class="actions">
+          <a class="btn btn-primary" href="/nerve/setup">Get started →</a>
+          <a class="btn btn-secondary" href="/nerve/downloads">Download Windows companion</a>
+        </div>
+        <div class="actions actions-secondary">
+          <a class="btn btn-ghost" href="/nerve/feedback">Report feedback</a>
+          <a class="btn btn-ghost" data-rel-link="donate" href="https://buymeacoffee.com/backchannelstudios" target="_blank" rel="noopener noreferrer">Support development ↗</a>
+        </div>
+        <p class="support-note">
+          No registration, checkout, subscription, donation or newsletter signup is required to
+          download or use Nerve during the alpha.
+        </p>
+      </div>
+
+      <div class="emblem">
+        <picture>
+          <source srcset="/assets/nerve-emblem-420.webp 420w, /assets/nerve-emblem-840.webp 840w"
+                  sizes="(max-width: 880px) 190px, 300px" type="image/webp" />
+          <img src="/assets/nerve-emblem-420.png"
+               width="420" height="412" alt="" />
+        </picture>
+      </div>
+    </div>
+
+    <div class="doc">
+
+      <!-- 3. REQUIREMENTS, PROMINENT -->
+      <h2 id="requirements">What you need before you start</h2>
+      <p>
+        Nerve is not a standalone AI service. Every item below is required, and you supply the AI
+        account yourself.
+      </p>
+
+      <div class="req-grid">
+        <div class="req-card">
+          <span class="req-idx">01 // Host</span>
+          <h3>A Windows GM host</h3>
+          <p>The Nerve companion runs on the machine hosting the campaign. <span data-rel="platform">Windows 10 / 11 (64-bit)</span>.</p>
+        </div>
+        <div class="req-card">
+          <span class="req-idx">02 // Tabletop</span>
+          <h3>Fantasy Grounds, 5E</h3>
+          <p>Fantasy Grounds Unity running the <span data-rel="rulesetShort">5E</span> ruleset. Other rulesets are untested in this alpha.</p>
+        </div>
+        <div class="req-card">
+          <span class="req-idx">03 // Extension</span>
+          <h3>The Nerve extension</h3>
+          <p>Installed through the Fantasy Grounds Forge. The extension on its own does not provide any AI service.</p>
+        </div>
+        <div class="req-card">
+          <span class="req-idx">04 // Companion</span>
+          <h3>The Nerve companion</h3>
+          <p>A separate local Windows companion application. It is downloaded and installed on its own, outside Fantasy Grounds.</p>
+        </div>
+        <div class="req-card">
+          <span class="req-idx">05 // Runtime</span>
+          <h3>Node.js <span data-rel="nodeMinimum">22</span> or newer</h3>
+          <p>The companion runs on Node.js. The installer will tell you if your version is too old.</p>
+        </div>
+        <div class="req-card">
+          <span class="req-idx">06 // AI account</span>
+          <h3>Your own AI account</h3>
+          <p>A compatible external AI application and account. <strong>AI access, allowance and costs are not included with Nerve</strong> and are billed by your provider, not by us.</p>
+        </div>
+      </div>
+
+      <div class="callout callout--warn">
+        <span class="callout-title">Alpha status</span>
+        <p>
+          Setup and gameplay behaviour are still being tested. Provider coverage and multiplayer
+          coverage are uneven, and we do not present either as certified. Expect to hit rough
+          edges — reporting them is the point of the alpha.
+        </p>
+      </div>
+
+      <hr class="rule" />
+
+      <!-- 4. HOW THE PIECES WORK TOGETHER -->
+      <h2 id="how-it-works">How the pieces work together</h2>
+      <p>
+        Nerve is three separate parts. Each one has to be present and matched to the others for a
+        session to work.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h3>The Fantasy Grounds extension</h3>
+          <p>
+            Installed through the Forge, it adds the Nerve controls inside Fantasy Grounds and
+            gathers the campaign context a request needs. It talks only to the local companion.
+            It contains no AI model and reaches no provider by itself.
+          </p>
+        </li>
+        <li>
+          <h3>The local Windows companion</h3>
+          <p>
+            A bridge that runs on your own machine, on the same host as the campaign. It receives
+            requests from the extension, holds your provider selection and sign-in, and passes
+            requests out to the AI application you chose. It also applies the guard rails that
+            decide which actions need your approval.
+          </p>
+        </li>
+        <li>
+          <h3>Your chosen AI application</h3>
+          <p>
+            The provider you sign in to, under your own account. The bridge runs locally, but
+            selected campaign context and source references are sent out to that provider, and
+            the provider's own policies, retention and costs apply. See
+            <a href="/nerve/privacy">Privacy and data flow</a> for exactly what that means.
+          </p>
+        </li>
+      </ol>
+
+      <hr class="rule" />
+
+      <!-- 5. WHAT TESTERS CAN EXPLORE -->
+      <h2 id="explore">What testers can explore</h2>
+      <div class="split">
+        <div>
+          <ul class="check-list">
+            <li><strong>Story Cue references.</strong> Pull relevant reference context into the moment you are playing.</li>
+            <li><strong>Narration.</strong> Scene and action description drawn from campaign context.</li>
+            <li><strong>Session continuity.</strong> Carrying what happened earlier into what happens next.</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="check-list">
+            <li><strong>Prompts and rolls.</strong> Asking for a roll, and responding to one.</li>
+            <li><strong>Supported guarded actions.</strong> A defined set of actions that can change campaign records, with an approval step in front of them.</li>
+          </ul>
+        </div>
+      </div>
+
+      <hr class="rule" />
+
+      <!-- 6. KNOWN LIMITATIONS + PRIVACY SUMMARY, BEFORE DOWNLOAD ACTIONS -->
+      <h2 id="limitations">Known limitations — read before you download</h2>
+      <p>
+        These are current, real and worth knowing before you install anything. The full list,
+        with troubleshooting, is on the <a href="/nerve/setup#troubleshooting">setup page</a>.
+      </p>
+
+      <ul class="caution-list">
+        <li>
+          <strong>Narration does not prove a record changed.</strong> A vivid description of paying
+          the innkeeper is not evidence that currency, inventory, a quest or a combat record was
+          actually updated. Check the native record.
+        </li>
+        <li>
+          <strong>Inventory, payment and reward bookkeeping is not a complete workflow.</strong>
+          Verify before making a manual correction, or you will create duplicates.
+        </li>
+        <li>
+          <strong>Quest completion is hard to see.</strong> It can be updated through supported
+          actions, but completion is not clearly reflected in the standard quest interface.
+        </li>
+        <li>
+          <strong>AI can be wrong.</strong> It can contradict earlier narration, misread source
+          material, or repeat a decision. Check outcomes that matter.
+        </li>
+        <li>
+          <strong>Responses can be slow or rate-limited.</strong> Built-in listeners normally time
+          out after three minutes. Clicking Call Nerve repeatedly while a response is in flight
+          does not help.
+        </li>
+        <li>
+          <strong>Story Cues are reference only.</strong> They do not move characters and do not
+          automatically reveal records.
+        </li>
+        <li>
+          <strong>Provider and multiplayer testing is incomplete.</strong> We are not publishing
+          provider rankings or upgrade recommendations off a handful of local comparisons.
+        </li>
+      </ul>
+
+      <h3 id="privacy-summary">Privacy and AI usage, in short</h3>
+      <p>
+        The bridge runs on your machine, but <strong>Nerve is not an offline product and campaign
+        data does not stay on your computer</strong>. Selected campaign context and source
+        references are sent to the external AI provider you choose, and that can include GM-only
+        material — "GM-only" governs what players see in Fantasy Grounds, not what the provider
+        receives. Your provider's policies and retention apply, and your AI account costs and
+        allowances are separate from Nerve. Get your group's agreement before you put their
+        campaign through a provider.
+      </p>
+      <p><a href="/nerve/privacy">Read the full privacy and data-flow page →</a></p>
+
+      <hr class="rule" />
+
+      <!-- 7. SETUP, RELEASE NOTES, FEEDBACK, DONATION LINKS -->
+      <h2 id="next">Where to go next</h2>
+      <div class="card-grid">
+        <a class="card-link" href="/nerve/setup">
+          <span class="k">Start here</span>
+          <h3>Setup guide</h3>
+          <p>The ordered install sequence, provider setup, your first session, and troubleshooting.</p>
+          <span class="go">Open the setup guide →</span>
+        </a>
+        <a class="card-link" href="/nerve/downloads">
+          <span class="k">Get the files</span>
+          <h3>Downloads</h3>
+          <p>Current companion release, checksum, Forge status and what each file is for.</p>
+          <span class="go">Go to downloads →</span>
+        </a>
+        <a class="card-link" href="/nerve/releases">
+          <span class="k">History</span>
+          <h3>Release notes</h3>
+          <p>Version history, known issues per release, and how to update each half of the product.</p>
+          <span class="go">See release notes →</span>
+        </a>
+        <a class="card-link" href="/nerve/feedback">
+          <span class="k">Help us</span>
+          <h3>Report feedback</h3>
+          <p>Bugs, suggestions and performance observations. The most useful thing you can send us.</p>
+          <span class="go">Open the feedback form →</span>
+        </a>
+      </div>
+
+      <div class="callout">
+        <span class="callout-title">Support Nerve development</span>
+        <p>
+          Free during alpha. Optional donations support development. Future stable releases or
+          additional products may be paid; pricing and availability will be announced separately.
+          No feature, download or support priority depends on donating.
+        </p>
+        <p>
+          <a data-rel-link="donate" href="https://buymeacoffee.com/backchannelstudios" target="_blank" rel="noopener noreferrer">Buy us a coffee ↗</a>
+        </p>
+      </div>
+
+      <p class="page-meta">
+        Nerve is a Backchannel Studios product. Fantasy Grounds and the Forge are operated by
+        SmiteWorks, which has not endorsed or certified this product.
+      </p>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
+      <nav aria-label="Footer">
+        <a href="/nerve/privacy">Privacy</a>
+        <a href="/nerve/terms">Terms</a>
+        <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/script.js"></script>
+</body>
+</html>

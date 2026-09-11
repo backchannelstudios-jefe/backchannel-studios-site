@@ -1,0 +1,46 @@
+{
+  "_comment": [
+    "SINGLE SOURCE OF TRUTH for every Nerve version number, date and download link on the site.",
+    "Edit this file only — never edit version numbers inside the HTML by hand.",
+    "`npm run build` (which Vercel runs automatically on every deploy) rewrites every",
+    "element marked data-rel=\"...\" and data-rel-link=\"...\" in the HTML from the values below.",
+    "",
+    "status values:",
+    "  companion.status : \"pending\" | \"available\"",
+    "  forge.status     : \"pending\" | \"available\"",
+    "A link is rendered as a real, clickable button ONLY when its status is \"available\"",
+    "AND its url is a non-empty https:// URL. Otherwise it renders as a non-clickable,",
+    "disabled control carrying the pendingLabel. This is deliberate: the acceptance",
+    "checklist requires that no placeholder link is ever clickable."
+  ],
+  "version": "0.67.1-alpha",
+  "channel": "alpha",
+  "releaseDate": "",
+  "releaseDateLabel": "",
+  "extensionVersion": "0.67.1-alpha",
+  "nodeMinimum": "22",
+  "platform": "Windows 10 / 11 (64-bit)",
+  "ruleset": "Fantasy Grounds Unity — 5E",
+  "rulesetShort": "5E",
+  "companion": {
+    "status": "pending",
+    "filename": "Nerve-Windows-Companion-0.67.1-alpha.zip",
+    "url": "",
+    "sizeLabel": "",
+    "sha256": "",
+    "checksumUrl": "",
+    "pendingLabel": "Companion download pending approval"
+  },
+  "forge": {
+    "status": "pending",
+    "url": "",
+    "itemName": "Nerve",
+    "pendingLabel": "Forge release pending"
+  },
+  "support": {
+    "donateUrl": "https://buymeacoffee.com/backchannelstudios"
+  },
+  "contact": {
+    "studioEmail": "backchannelstudios1@gmail.com"
+  }
+}
