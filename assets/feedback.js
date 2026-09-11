@@ -10,7 +10,9 @@
   "use strict";
 
   var form = document.getElementById("feedback-form");
-  if (!form) return;
+  // The form is hidden by the build while release.json has feedback.formEnabled=false.
+  // Nothing to enhance in that case — the page shows the email route instead.
+  if (!form || form.hidden) return;
 
   var statusBox = document.getElementById("form-status");
   var submitBtn = document.getElementById("submit-btn");
