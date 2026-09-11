@@ -3,10 +3,16 @@
 Built against **Nerve Alpha Website — Development Requirements** (10 September 2026) and the
 **Nerve website review** (11 September 2026). Current release: **0.67.1 (alpha)**.
 
-**The Windows companion is published; the Fantasy Grounds extension is not.** Nerve needs both
-halves, so the site frames this as a release preview throughout and does not imply a working
-setup is possible yet. The Forge control stays a non-clickable disabled element until its URL
-exists — enforced at build time, not by convention.
+**Both halves are published.** The Forge listing is public
+([item 3596](https://forge.fantasygrounds.com/shop/items/3596/view)) and the Windows companion
+downloads from this site. Nerve needs both, so neither control replaces the other.
+
+**What being listed does not mean.** A signed-in acquisition plus an install through the Fantasy
+Grounds updater has not been run end to end. `forge.installVerified` in `nerve/release.json` is
+`false`, and while it is false the downloads and setup pages say plainly that the path is not
+proven. Set it to `true` only once that test has actually passed — nothing else on the site
+claims it has. Being listed on the Forge is a moderation outcome, not endorsement, certification
+or permission from SmiteWorks, and `npm run check` fails the build if any page says otherwise.
 
 ---
 
@@ -16,10 +22,10 @@ exists — enforced at build time, not by convention.
 | --- | --- |
 | `/nerve` | Product overview — alpha label, value statement, requirements, how the three pieces fit together, what testers can explore, known limitations, privacy summary |
 | `/nerve/setup` | Ten-step ordered install, update paths, developer-preview migration, troubleshooting table |
-| `/nerve/downloads` | Prerequisites, current release metadata, companion + checksum + Forge controls, previous releases |
+| `/nerve/downloads` | Prerequisites, current release metadata, companion + checksum + Forge controls, the forum route, previous releases |
 | `/nerve/releases` | Version pairing table, per-release known issues, update instructions |
 | `/nerve/privacy` | Product data flow and website data collection, kept strictly apart |
-| `/nerve/feedback` | Email report route with a what-to-include checklist; the form is built but hidden until a destination exists |
+| `/nerve/feedback` | Two report routes — the public forum thread and private email — with a shared what-to-include checklist and a redaction warning on the public one. The in-page form is built but hidden until it has a destination |
 | `downloads/nerve/<ver>/` | The published companion ZIP and its generated `.sha256` sidecar |
 | `drafts/` | Unpublished work — currently the Terms draft. Redirected away, robots-disallowed |
 | `/api/feedback` | Vercel serverless intake for the form |
@@ -87,9 +93,33 @@ deployment serving, so a mistake here cannot take the site down.
 **To unpublish**, set `companion.status` back to `"pending"`. The download reverts to a
 non-clickable disabled control and the pages round-trip byte-for-byte.
 
-**When the Forge item is approved**, set `forge.status` to `"available"` and paste the URL into
-`forge.url`. That one change also removes the "release preview" warnings from the overview,
-downloads and releases pages, because they are conditional on the Forge still being pending.
+**The Forge item is live** — `forge.status` is `"available"` and `forge.url` holds the published
+item. Setting it back to `"pending"` restores the release-preview copy byte-for-byte; the pending
+text is kept in the pages, hidden, precisely so that round trip stays lossless.
+
+**The one flag left to flip** is `forge.installVerified`. Set it to `true` after acquiring the
+listing while signed in and installing through the Fantasy Grounds updater on a clean profile.
+That removes the caveat from the downloads and setup pages and nothing else.
+
+## 3b. The external destinations
+
+| Field in `release.json` | Where it points | Rendered as |
+| --- | --- | --- |
+| `forge.url` | the published Forge item | "Get Nerve on Forge" — primary call to action |
+| `community.forumUrl` | the public Fantasy Grounds thread | "Discussion and bug reports" |
+| `support.url` | the same Forge item | "Support Nerve on Forge" |
+
+`npm run check` asserts each control resolves to exactly the published item or thread — a typo
+here is a link into someone else's product, so it fails the check rather than warning. It also
+fails if a Nerve page links to Buy Me a Coffee: that endpoint was removed from the Forge listing
+by the owner, so Nerve support goes through the listing's own options instead. **Do not add a
+direct donation endpoint, and do not let any copy imply donating is required or unlocks
+anything.** A studio-wide support page is a separate matter and is untouched by this.
+
+Feedback has two routes. The forum thread is public and hosted by SmiteWorks — not ours to take
+down — so `/nerve/feedback` tells reporters to redact personal information, credentials and
+private campaign material before posting, and to keep support bundles out of public posts. Email
+stays for anything private. `/nerve/privacy` draws the same distinction.
 
 ## 4. Turning the feedback form on
 
@@ -123,14 +153,23 @@ not be public is worse than no page. The draft now lives at
 **Release stamping** — 9 pages scanned. Round-trip tested pending → available → pending;
 output is byte-identical, so nothing is lost by flipping status either way.
 
-**Pre-publication checks (`npm run check`)** — 9 pages, no problems:
+**Pre-publication checks (`npm run check`)** — 8 pages, no problems:
 - every internal link and asset reference resolves; every `#anchor` has a matching `id`
 - no placeholder link is clickable anywhere
 - no prohibited claim wording (guaranteed response times, universal provider compatibility,
-  complete rules automation, SmiteWorks endorsement, lifetime access, tax deductibility, premium
-  support, "data never leaves your computer", DM replacement, donation dashboard URL)
+  complete rules automation, SmiteWorks endorsement, **Forge listing described as SmiteWorks
+  approval, certification or permission**, **donating implied to be required**, lifetime access,
+  tax deductibility, premium support, "data never leaves your computer", DM replacement,
+  donation dashboard URL)
+- **the Forge, forum and support controls resolve to exactly the published item and thread**
+- **no Nerve page links to Buy Me a Coffee**
+- **no visible copy still calls the Forge listing pending** while `forge.status` is `available`
+  (hidden pending blocks are skipped, so the pending → available round trip stays lossless)
 - every page has a title, description, canonical, favicon, skip link, `lang`, one `<h1>`, and
   `alt` on every image
+
+Each of the four new guards was proven by deliberately breaking it — wrong item number, wrong
+thread id, a stale donation link, and "Approved by SmiteWorks" — and confirming the check failed.
 
 **Endpoint tests (`npm run test:feedback`)** — 21 assertions, all passing:
 - GET rejected; missing/invalid fields rejected with a message naming them
@@ -166,17 +205,17 @@ delivery, and clean-profile public installation. The pages state these are still
 | 1 | Homepage Nerve link reaches the dedicated page | ✅ `/nerve` |
 | 2 | Alpha status and all prerequisites visible before download | ✅ overview, downloads and setup all list all six |
 | 3 | Free access independent of donations or registration | ✅ stated on overview and terms |
-| 4 | Public donation link correct, no dashboard URL | ✅ checked by `npm run check` |
-| 5 | Hosted download succeeds and SHA-256 matches | ⏳ no artifact published yet |
+| 4 | Support link correct, no dashboard URL, no invented donation endpoint | ✅ Nerve support goes to the Forge listing; `npm run check` fails on a Buy Me a Coffee link on any Nerve page |
+| 5 | Hosted download succeeds and SHA-256 matches | ✅ served ZIP, sidecar and page value all hash to `23de585d…`, verified against the live site |
 | 6 | Every displayed version matches the approved release | ✅ all generated from `release.json` |
-| 7 | Forge status truthful, no clickable placeholder | ✅ enforced at build time |
+| 7 | Forge status truthful, no clickable placeholder | ✅ listing is live and linked; the untested-install caveat is stated, not glossed |
 | 8 | No submission bundle, internal notes, campaign data or credentials public | ✅ none present; downloads page says so |
 | 9 | Setup explains extension/runtime ownership and migration | ✅ |
 | 10 | Known limitations include quest visibility, bookkeeping, latency, AI errors | ✅ overview and release notes |
 | 11 | Feedback success/failure, validation and spam protection tested | ✅ 21 assertions |
 | 12 | Privacy and terms reflect approved wording | ⏳ **awaiting owner wording** |
 | 13 | Desktop/mobile and keyboard checks pass | ✅ |
-| 14 | Product owner approves staging before production | ⏳ **yours to do** — open a PR for a preview URL |
+| 14 | Product owner approves staging before production | ✅ Neal approved; live as of 11 September 2026 |
 
 ---
 
