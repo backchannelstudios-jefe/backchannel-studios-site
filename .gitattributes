@@ -1,0 +1,14 @@
+# Keep the checksum sidecar byte-identical on every platform.
+# Git's autocrlf would otherwise hand Windows a CRLF copy, which the build
+# rewrites with LF on the next run — a phantom "modified file" after every
+# fresh clone. Pinning it to LF makes the file the same everywhere.
+*.sha256 text eol=lf
+
+# The published download must never be touched by Git. It is the file whose
+# SHA-256 we advertise, so any end-of-line conversion would silently break
+# checksum verification for everyone who downloads it. Git detects binary
+# on its own, but this is too important to leave to detection.
+*.zip  binary
+*.png  binary
+*.webp binary
+*.ico  binary
