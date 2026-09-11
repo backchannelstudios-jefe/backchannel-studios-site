@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nerve Setup Guide — Free Alpha | Backchannel Studios</title>
+  <meta name="description" content="Install Nerve for Fantasy Grounds in order: extension, Node.js, Windows companion, provider sign-in, and your first tracked session — plus troubleshooting and developer-preview migration." />
+  <link rel="canonical" href="https://www.thebackchannel.studio/nerve/setup" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/mark-32.png" />
+  <link rel="apple-touch-icon" href="/assets/mark-180.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0b0d" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Backchannel Studios" />
+  <meta property="og:title" content="Nerve Setup Guide — Free Alpha" />
+  <meta property="og:description" content="The ordered install sequence for Nerve on Fantasy Grounds, provider setup, first session and troubleshooting." />
+  <meta property="og:url" content="https://www.thebackchannel.studio/nerve/setup" />
+  <meta property="og:image" content="https://www.thebackchannel.studio/assets/og-nerve.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Nerve AI emblem beside the words Nerve, Free Alpha, from Backchannel Studios." />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="/"><img src="/assets/mark-96.png" width="30" height="30" alt="" />BACKCHANNEL.</a>
+      <div class="nav-links">
+        <a href="/#services">Services</a>
+        <a href="/projects">Projects</a>
+        <a href="/nerve">Nerve</a>
+        <a href="/#about">About</a>
+        <a href="/#contact">Contact</a>
+      </div>
+      <a class="nav-cta" href="/#contact">Get in Touch</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="subnav">
+    <nav class="subnav-inner" aria-label="Nerve pages">
+      <a href="/nerve">Overview</a>
+      <a href="/nerve/setup" aria-current="page">Setup</a>
+      <a href="/nerve/downloads">Downloads</a>
+      <a href="/nerve/releases">Releases</a>
+      <a href="/nerve/feedback">Feedback</a>
+      <a href="/nerve/privacy">Privacy</a>
+      <a href="/nerve/terms">Terms</a>
+    </nav>
+  </div>
+
+  <main id="main">
+    <div class="doc doc-narrow">
+
+      <div class="title-row">
+        <h1 class="page-title">Setup guide</h1>
+        <span class="alpha-badge">Free Alpha</span>
+      </div>
+      <p class="page-lede">
+        Do these in order. Steps 1 to 5 install the software; steps 6 to 8 connect your own AI
+        account; steps 9 and 10 run and end a session. Skipping ahead is the most common cause of
+        a setup that will not connect.
+      </p>
+
+      <nav class="toc" aria-labelledby="toc-h">
+        <h2 id="toc-h">On this page</h2>
+        <ol>
+          <li><a href="#requirements">Before you begin</a></li>
+          <li><a href="#install">Install and connect — ten steps</a></li>
+          <li><a href="#updates">How updates work</a></li>
+          <li><a href="#migration">Migrating from a developer preview</a></li>
+          <li><a href="#troubleshooting">Troubleshooting</a></li>
+        </ol>
+      </nav>
+
+      <h2 id="requirements">Before you begin</h2>
+      <div class="callout callout--warn">
+        <span class="callout-title">You need all of these</span>
+        <ul>
+          <li>A Windows GM host — <span data-rel="platform">Windows 10 / 11 (64-bit)</span>. The companion runs on the machine hosting the campaign.</li>
+          <li>Fantasy Grounds Unity running the <span data-rel="rulesetShort">5E</span> ruleset.</li>
+          <li>The Nerve extension, installed through the Forge. <strong>The extension on its own provides no AI service.</strong></li>
+          <li>The separate Nerve Windows companion.</li>
+          <li>Node.js <span data-rel="nodeMinimum">22</span> or newer.</li>
+          <li>A compatible external AI application and account. <strong>AI access, allowance and costs are not included with Nerve</strong> — your provider bills you, not us.</li>
+        </ul>
+      </div>
+      <p>
+        Selected campaign context and source references are sent to the AI provider you choose,
+        and that can include GM-only material. Read
+        <a href="/nerve/privacy">privacy and data flow</a> and get your group's agreement before
+        you put their campaign through a provider.
+      </p>
+
+      <hr class="rule" />
+
+      <h2 id="install">Install and connect — ten steps</h2>
+
+      <ol class="steps">
+
+        <li>
+          <h3>Back up your campaign, and start with a test copy</h3>
+          <p>
+            Do not learn Nerve on the campaign you care about. Make a backup, then make a
+            throwaway copy of a campaign and do your first sessions there. Nerve can change
+            campaign records through supported actions, and this is alpha software.
+          </p>
+        </li>
+
+        <li>
+          <h3>Install the Nerve extension through the Forge, then run the updater</h3>
+          <p>
+            Add the Nerve item to your Forge library, then launch Fantasy Grounds and let the
+            updater run so the extension is actually downloaded to your machine. Installing the
+            Forge item without running the updater leaves you with nothing installed.
+          </p>
+          <p>
+            Current packaging targets Forge <strong>Data</strong> installation, not encrypted
+            Vault delivery.
+          </p>
+          <div class="callout callout--pending">
+            <span class="callout-title">Forge release pending</span>
+            <p>
+              The Forge item is not publicly available yet, so this step cannot be completed by
+              new testers today. <a href="/nerve/downloads">Downloads</a> shows the current
+              status.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <h3>Install Node.js, then download and fully extract the companion</h3>
+          <p>
+            Install Node.js <span data-rel="nodeMinimum">22</span> or newer if you do not have it.
+            Then download the companion ZIP that matches your extension version from
+            <a href="/nerve/downloads">Downloads</a>, verify its SHA-256 checksum, and
+            <strong>extract the ZIP completely</strong> before running anything.
+          </p>
+          <div class="callout callout--warn">
+            <span class="callout-title">Extract, do not browse</span>
+            <p>
+              Running the installer from inside Windows' zip preview — without extracting first —
+              is a frequent cause of a half-installed companion. Extract the archive to a real
+              folder, then open that folder.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <h3>Run <code>Install-Nerve.cmd</code> and answer its prompts</h3>
+          <p>
+            From the extracted folder, run <code>Install-Nerve.cmd</code>. It will ask which
+            campaign to attach to and what role to configure. Answer with the test campaign from
+            step 1.
+          </p>
+        </li>
+
+        <li>
+          <h3>Enable Nerve Adapter in Fantasy Grounds and confirm the version</h3>
+          <p>
+            Launch Fantasy Grounds, enable the <strong>Nerve Adapter</strong> extension for your
+            campaign, load the campaign, and confirm the version it reports matches the companion
+            you installed. Mismatched halves are the second most common setup failure.
+          </p>
+        </li>
+
+        <li>
+          <h3>Open Nerve Control → AI Setup and select your provider</h3>
+          <p>
+            <img class="inline-icon" src="/assets/nerve-fgu-sidebar-icon.png" width="20" height="20" alt="" />
+            The Nerve control appears in the Fantasy Grounds sidebar with this icon. Open
+            <strong>Nerve Control</strong>, go to <strong>AI Setup</strong>, and select the
+            provider you intend to use. If the provider needs local components, use
+            <strong>Install / Repair</strong> first, then <strong>Sign In</strong>.
+          </p>
+        </li>
+
+        <li>
+          <h3>Complete your provider's own sign-in</h3>
+          <p>
+            Authentication is owned by your provider, not by Nerve. A browser window may not
+            appear at all if you are already signed in — that is normal, not a failure.
+          </p>
+          <div class="callout callout--warn">
+            <span class="callout-title">Signing in to the provider's website is not enough</span>
+            <p>
+              Being logged in to an ordinary browser chat session does not establish the listener
+              connection Nerve needs. You have to complete sign-in through the AI Setup flow.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <h3>Run Test + Use, and check which provider succeeded</h3>
+          <p>
+            Use <strong>Test + Use</strong> and confirm both that the test succeeded
+            <em>and</em> that the provider it reports is the one you meant to select. Do not start
+            play on an untested connection.
+          </p>
+          <p>
+            Tests and gameplay both consume your provider allowance. Nerve does not meter, cap or
+            pay for that.
+          </p>
+        </li>
+
+        <li>
+          <h3>Start Nerve and begin a session</h3>
+          <p>
+            Start Nerve to open a tracked session. <strong>New tracked sessions default to Flow
+            Mode.</strong> If you would rather approve each action yourself, switch to manual
+            approval before you play rather than during a scene.
+          </p>
+          <p>
+            You can stop the connector at any time. <strong>Stop Nerve cancels what is in flight —
+            it is not an undo.</strong> Anything already applied to campaign records stays applied.
+          </p>
+        </li>
+
+        <li>
+          <h3>End Session, confirm the connector stopped, and check the records</h3>
+          <p>
+            Use <strong>End Session</strong> and confirm the connector has actually stopped. Then
+            inspect the native Fantasy Grounds records for anything an action claimed to change —
+            inventory, currency, quests, combat. Narration is not proof that a record changed.
+          </p>
+        </li>
+
+      </ol>
+
+      <hr class="rule" />
+
+      <h2 id="updates">How updates work</h2>
+      <p>
+        Nerve updates along two separate paths, and they must stay in step:
+      </p>
+      <div class="table-wrap">
+        <table class="data">
+          <caption>Two pieces, two update paths</caption>
+          <thead>
+            <tr><th scope="col">Piece</th><th scope="col">Updated by</th><th scope="col">How</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Nerve extension</th>
+              <td>Fantasy Grounds</td>
+              <td>Update the Forge item, then run the Fantasy Grounds updater.</td>
+            </tr>
+            <tr>
+              <th scope="row">Nerve companion</th>
+              <td>The companion installer</td>
+              <td>Download the matching ZIP, extract completely, run <code>Install-Nerve.cmd</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Always check the <a href="/nerve/releases">release notes</a> for the version pairing
+        before updating one half on its own.
+      </p>
+
+      <hr class="rule" />
+
+      <h2 id="migration">Migrating from a developer preview</h2>
+      <p>
+        If you have been running a developer preview build, do not install the packaged extension
+        on top of it. Fantasy Grounds will find two copies and behave unpredictably.
+      </p>
+      <ol class="steps">
+        <li>
+          <h3>Close Fantasy Grounds completely</h3>
+          <p>Fully exit — not just the campaign.</p>
+        </li>
+        <li>
+          <h3>Move the old <code>extensions/Nerve</code> folder out of <code>extensions</code></h3>
+          <p>
+            Move it somewhere you can get it back from — your desktop is fine. Move it
+            <em>out of</em> the <code>extensions</code> folder entirely; renaming it in place is
+            not enough.
+          </p>
+          <div class="callout callout--warn">
+            <span class="callout-title">Never delete campaign data</span>
+            <p>
+              This step touches the extension folder only. Your campaigns, characters and modules
+              are somewhere else and must be left alone. If an instruction anywhere tells you to
+              delete campaign data to fix Nerve, it is wrong — <a href="/nerve/feedback">tell us</a>.
+            </p>
+          </div>
+        </li>
+        <li>
+          <h3>Install the packaged extension from the Forge</h3>
+          <p>Then run the Fantasy Grounds updater, as in step 2 above.</p>
+        </li>
+        <li>
+          <h3>Re-run the Forge companion installer</h3>
+          <p>
+            Run <code>Install-Nerve.cmd</code> from the new companion package so the runtime is
+            repointed at the packaged extension.
+          </p>
+        </li>
+      </ol>
+      <p>
+        If Fantasy Grounds warns you about duplicate Nerve copies, you are seeing the problem
+        these steps fix — come back here rather than deleting anything.
+      </p>
+
+      <hr class="rule" />
+
+      <h2 id="troubleshooting">Troubleshooting</h2>
+      <p>
+        Each row is a concrete next step, not a diagnosis. If none of them fit, send us a
+        <a href="/nerve/feedback">bug report</a> with your exact error code.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <caption>Common problems and what to do next</caption>
+          <thead>
+            <tr>
+              <th scope="col">What you see</th>
+              <th scope="col">Likely cause</th>
+              <th scope="col">Next step</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Nerve controls appear but nothing responds</th>
+              <td>The companion is not installed or not running.</td>
+              <td>The extension cannot reach a provider on its own. Install the companion (<a href="#install">steps 3 and 4</a>) and confirm it is running on the GM host.</td>
+            </tr>
+            <tr>
+              <th scope="row">Sign-in never completes, or no browser opens</th>
+              <td>You are already signed in, or sign-in was done in an ordinary browser tab.</td>
+              <td>No browser window is expected if you are already signed in. Ordinary browser chat sign-in does not establish the listener — redo sign-in through <a href="#install">AI Setup</a>.</td>
+            </tr>
+            <tr>
+              <th scope="row">Responses come from the wrong provider</th>
+              <td>A different provider is selected than the one you signed in to.</td>
+              <td>Run <strong>Test + Use</strong> and read which provider it reports before playing. Reselect in AI Setup if it is not the one you want.</td>
+            </tr>
+            <tr>
+              <th scope="row">Version mismatch, or odd behaviour after an update</th>
+              <td>Extension and companion are on different versions.</td>
+              <td>Reload the campaign and confirm the reported version. Check the <a href="/nerve/releases">release notes</a> pairing and update whichever half is behind.</td>
+            </tr>
+            <tr>
+              <th scope="row">Fantasy Grounds warns about duplicate extensions</th>
+              <td>A developer-preview folder is still in <code>extensions</code>.</td>
+              <td>Follow <a href="#migration">migration</a>. Move the old folder out to a recoverable backup — do not delete campaign data.</td>
+            </tr>
+            <tr>
+              <th scope="row">Response is slow, or times out</th>
+              <td>Provider latency, or a request that has already failed.</td>
+              <td>Built-in listeners normally time out after three minutes. Wait it out rather than clicking Call Nerve again — repeat clicks queue more work, they do not speed anything up.</td>
+            </tr>
+            <tr>
+              <th scope="row"><code>APP_LISTENER_PROTOCOL_FAILED</code></th>
+              <td>Several causes. On Grok in this candidate, a detailed "Rate limited" message can surface under this code.</td>
+              <td>Read the detail text under the code before concluding anything. <strong>A timeout on its own is not proof of subscription throttling.</strong> Include the full message in a <a href="/nerve/feedback">bug report</a>.</td>
+            </tr>
+            <tr>
+              <th scope="row">You approved an action but nothing visibly changed</th>
+              <td>The record may have changed without an obvious interface cue — quest completion in particular.</td>
+              <td>Open the native record and check it directly. Quest completion can be updated through supported actions but is not clearly visible in the standard quest interface. If the record really is unchanged, that is a bug worth reporting.</td>
+            </tr>
+            <tr>
+              <th scope="row">Stop Nerve did not undo what happened</th>
+              <td>Working as designed.</td>
+              <td><strong>Stop Nerve cancels in-flight work; it is not an undo.</strong> Correct campaign records manually, checking first so you do not double-apply a change.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="support-bundle">Support bundles</h3>
+      <p>
+        The companion ships with <code>Collect-Nerve-Support.cmd</code>, which gathers diagnostic
+        information into a single bundle. <strong>Do not attach a bundle to the public feedback
+        form</strong> — bundles can contain campaign content and account details. Review the
+        contents yourself, and share one privately only if we ask you for it.
+      </p>
+
+      <p class="page-meta">
+        Fantasy Grounds and the Forge are operated by SmiteWorks, which has not endorsed or
+        certified this product.
+      </p>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
+      <nav aria-label="Footer">
+        <a href="/nerve/privacy">Privacy</a>
+        <a href="/nerve/terms">Terms</a>
+        <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/script.js"></script>
+</body>
+</html>
