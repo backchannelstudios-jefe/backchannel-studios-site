@@ -43,8 +43,21 @@ const FORBIDDEN = [
   [/(never|does not)\s+leaves?\s+your\s+computer(?![^.]*not)/i, "claims data never leaves the computer"],
   [/\bfully\s+offline\b/i, "claims the product is offline"],
   [/replace(s|ment)?\s+(your|the)\s+(dm|gm|dungeon master|game master)\b(?![^.]*not)/i, "presents Nerve as a DM replacement"],
-  [/buymeacoffee\.com\/(dashboard|home)/i, "uses the donation dashboard URL instead of the public link"]
+  [/buymeacoffee\.com\/(dashboard|home)/i, "uses the donation dashboard URL instead of the public link"],
+  /* Being listed on the Forge is a moderation outcome, not an endorsement. */
+  [/(approved|certified|vetted|endorsed|permitted|authoris?zed)\s+by\s+smiteworks/i,
+   "describes Forge publication as SmiteWorks endorsement or permission"],
+  [/smiteworks\s+(has\s+)?(approved|endorsed|certified|authoris?zed|permitted)/i,
+   "describes Forge publication as SmiteWorks endorsement or permission"],
+  [/(explicit|express|written)\s+permission\s+(from|of)\s+smiteworks/i,
+   "claims explicit permission from SmiteWorks"],
+  [/donation\s+is\s+required|must\s+donate|required\s+to\s+donate/i,
+   "implies donating is required"]
 ];
+
+/* Exact external destinations. A typo here is a link into someone else's product. */
+const FORGE_URL = "https://forge.fantasygrounds.com/shop/items/3596/view";
+const FORUM_URL = "https://www.fantasygrounds.com/forums/showthread.php?88108";
 
 /* ---------- collect files ---------- */
 async function* walk(dir) {
@@ -146,6 +159,31 @@ for (const page of pages) {
     }
   }
 
+  /* Nerve-specific support now goes through the Forge listing. Buy Me a Coffee was
+     removed from the Forge item by the owner, so a stale link on a Nerve page would
+     send supporters somewhere the product no longer points. Studio-wide pages are
+     deliberately out of scope. */
+  if (page === "nerve/index.html" || page.startsWith("nerve/")) {
+    for (const ref of refs) {
+      if (/buymeacoffee\.com/i.test(ref)) {
+        fail(page, `Nerve pages must not link to Buy Me a Coffee — support goes to the Forge listing (found "${ref}")`);
+      }
+    }
+  }
+
+  /* Every generated external control must land on exactly the right item/thread,
+     whether the build replaced the whole element (data-rel-link) or only its href
+     (data-rel-href). A control still rendered as a disabled <span> is not checked
+     here — it carries no destination to get wrong. */
+  for (const [, tag] of html.matchAll(/<a\s([^>]*\sdata-rel-(?:link|href)="(?:forge|forum|support)"[^>]*)>/g)) {
+    const kind = /\sdata-rel-(?:link|href)="([^"]*)"/.exec(tag)?.[1];
+    const href = /(?:^|\s)href="([^"]*)"/.exec(tag)?.[1] ?? "";
+    const want = kind === "forum" ? FORUM_URL : FORGE_URL;
+    if (href !== want) {
+      fail(page, `the ${kind} control points at "${href}", expected exactly "${want}"`);
+    }
+  }
+
   /* prohibited claims — check visible text only */
   const text = html
     /* Blocks marked data-claim-exempt state what we do NOT promise. Scanning them
@@ -209,8 +247,63 @@ if (fileSet.has("site.webmanifest")) {
 
 /* ---------- release record sanity ---------- */
 const rel = JSON.parse(await readFile(join(ROOT, "nerve", "release.json"), "utf8"));
-if (rel.support?.donateUrl !== "https://buymeacoffee.com/backchannelstudios") {
-  fail("nerve/release.json", `donateUrl should be the public link, got "${rel.support?.donateUrl}"`);
+
+if (rel.forge?.status === "available" && rel.forge?.url !== FORGE_URL) {
+  fail("nerve/release.json", `forge.url should be "${FORGE_URL}", got "${rel.forge?.url}"`);
+}
+if (rel.community?.forumUrl !== FORUM_URL) {
+  fail("nerve/release.json", `community.forumUrl should be "${FORUM_URL}", got "${rel.community?.forumUrl}"`);
+}
+if (rel.support?.url !== FORGE_URL) {
+  fail("nerve/release.json", `Nerve support should point at the Forge listing, got "${rel.support?.url}"`);
+}
+if (/buymeacoffee/i.test(JSON.stringify(rel.support || {}).replace(/"_[^"]*":\s*(\[[^\]]*\]|"[^"]*")/g, ""))) {
+  fail("nerve/release.json", "support still carries a Buy Me a Coffee endpoint for Nerve");
+}
+
+/* ---------- nothing visible may still call the Forge listing pending ----------
+   The pending copy is kept in the pages (hidden) so that flipping the status back
+   round-trips byte-for-byte. This check reads only what a visitor would see. */
+if (rel.forge?.status === "available") {
+  /* Remove any element the build hid, including everything nested inside it. */
+  function stripHiddenBlocks(html) {
+    const open = /<([a-z]+)([^>]*\s(?:data-rel-when|data-rel-note)="[^"]*"[^>]*\shidden(?=[\s>])[^>]*)>/i;
+    let out = html, guard = 0;
+    for (;;) {
+      const m = open.exec(out);
+      if (!m || ++guard > 500) break;
+      const tag = m[1];
+      const re = new RegExp(`</?${tag}\\b`, "gi");
+      re.lastIndex = m.index + m[0].length;
+      let depth = 1, end = out.length, hit;
+      while ((hit = re.exec(out))) {
+        depth += hit[0][1] === "/" ? -1 : 1;
+        if (depth === 0) { end = hit.index + tag.length + 3; break; }
+      }
+      out = out.slice(0, m.index) + " " + out.slice(end);
+    }
+    return out;
+  }
+
+  const PENDING = [
+    /forge\s+(release|listing|item|submission)\s+(is\s+)?pending/i,
+    /pending\s+(forge\s+)?(approval|moderation|review)/i,
+    /(not|isn't|is not)\s+(yet\s+)?(available|published|live)\s+on\s+the\s+forge/i,
+    /awaiting\s+(forge|smiteworks)/i,
+    /release\s+preview/i
+  ];
+  for (const page of pages.filter((p) => p.startsWith("nerve/"))) {
+    const visible = stripHiddenBlocks(await readFile(join(ROOT, page), "utf8"))
+      .replace(/<script[\s\S]*?<\/script>/g, " ")
+      .replace(/<style[\s\S]*?<\/style>/g, " ")
+      .replace(/<!--[\s\S]*?-->/g, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ");
+    for (const re of PENDING) {
+      const hit = re.exec(visible);
+      if (hit) fail(page, `visible text still says the Forge listing is pending: "${hit[0].trim()}"`);
+    }
+  }
 }
 
 /* ---------- report ---------- */

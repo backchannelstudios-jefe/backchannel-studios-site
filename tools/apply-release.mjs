@@ -26,15 +26,25 @@
      <tag data-rel="dotted.key">…</tag>
          → the value, with a sensible fallback when still unknown
 
-     <tag data-rel-link="companion|checksum|forge|donate">…</tag>
-         → a real <a> only when the target exists and is approved;
-           otherwise a non-clickable disabled control. A placeholder
-           link is never rendered as clickable.
+     <tag data-rel-link="companion|checksum|forge|forum|support">…</tag>
+         → REPLACED by a generated <a> when the target exists and is
+           approved; otherwise by a non-clickable disabled control. A
+           placeholder link is never rendered as clickable. The element's
+           own contents are discarded, so use this only for buttons.
+           Add data-rel-variant="primary|secondary|ghost" to choose how
+           the generated button looks.
+
+     <a data-rel-href="companion|checksum|forge|forum|support">…</a>
+         → only the href is rewritten; the element and everything inside
+           it is left exactly as authored. Use this for cards and for
+           links that sit inside a sentence.
 
      <span data-rel-status="companion|forge">…</span>   → status pill
      <p   data-rel-note="companion|forge">…</p>         → hidden once live
-     <tag data-rel-when="companion|forge|feedbackForm[:not]">…</tag>
-         → `hidden` toggled on the whole element by that condition
+     <tag data-rel-when="<condition>[:not]">…</tag>
+         → `hidden` toggled on the whole element by that condition.
+           Conditions: companion, forge, forum, feedbackForm,
+           forgeInstallVerified
 
    The committed HTML always carries the current values, so pages
    are correct even if this never runs. Running it twice is a no-op.
@@ -113,6 +123,12 @@ if (companion.status === "available") {
 if (rel.forge?.status === "available" && !isHttps(rel.forge.url)) {
   fail("forge.status is 'available' but forge.url is not an https:// URL");
 }
+if (rel.community?.forumUrl && !isHttps(rel.community.forumUrl)) {
+  fail("community.forumUrl is set but is not an https:// URL");
+}
+if (rel.support?.url && !isHttps(rel.support.url)) {
+  fail("support.url is set but is not an https:// URL");
+}
 for (const [name, obj] of [["companion", rel.companion], ["forge", rel.forge]]) {
   if (obj?.status && !["pending", "available"].includes(obj.status)) {
     fail(`${name}.status must be "pending" or "available", got "${obj.status}"`);
@@ -179,39 +195,75 @@ const companionReady = companion.status === "available" && !!companion.url;
 const checksumReady = companionReady && !!companion.checksumUrl;
 const forgeReady = rel.forge?.status === "available" && isHttps(rel.forge?.url);
 const feedbackFormReady = rel.feedback?.formEnabled === true;
+const forumReady = isHttps(rel.community?.forumUrl);
+/* Publishing on the Forge is not the same as having tested installation from it. */
+const forgeInstallVerified = forgeReady && rel.forge?.installVerified === true;
 
 const CONDITION = {
   companion: companionReady,
   forge: forgeReady,
-  feedbackForm: feedbackFormReady
+  forum: forumReady,
+  feedbackForm: feedbackFormReady,
+  forgeInstallVerified
 };
 
 /* ---------- link rendering ---------- */
 
-function renderLink(kind) {
-  const disabled = (label) => `<span class="btn-disabled" data-rel-link="${kind}">${escapeHtml(label)}</span>`;
+/* A placeholder may carry data-rel-variant="primary|secondary|ghost|bare" to choose how
+   the generated control looks, so the same link can lead a page or sit in a list. */
+function variantOf(attrs, fallback) {
+  const m = /\sdata-rel-variant="(primary|secondary|ghost|bare)"/.exec(attrs || "");
+  return m ? m[1] : fallback;
+}
+const classFor = (v) =>
+  v === "bare" ? "" :
+  v === "ghost" ? 'class="btn btn-ghost" ' :
+  v === "primary" ? 'class="btn btn-primary" ' : 'class="btn btn-secondary" ';
+
+function renderLink(kind, attrs) {
+  const disabled = (label) =>
+    `<span class="btn-disabled" data-rel-link="${kind}"${variantAttr(attrs)}>${escapeHtml(label)}</span>`;
+  const variantAttr = (a) => {
+    const m = /\sdata-rel-variant="[^"]*"/.exec(a || "");
+    return m ? m[0] : "";
+  };
+  const v = (fallback) => classFor(variantOf(attrs, fallback));
 
   switch (kind) {
     case "companion":
       if (!companionReady) return disabled(rel.companion?.pendingLabel || "Companion download pending approval");
       return (
-        `<a class="btn btn-primary" data-rel-link="companion" href="${escapeHtml(companion.url)}" ` +
+        `<a ${v("secondary")}data-rel-link="companion"${variantAttr(attrs)} href="${escapeHtml(companion.url)}" ` +
         `download="${escapeHtml(companion.filename)}" type="application/zip">` +
-        `Download for Windows (${escapeHtml(companion.sizeLabel)})</a>`
+        `Download Windows Companion (${escapeHtml(companion.sizeLabel)})</a>`
       );
 
     case "checksum":
       if (!checksumReady) return disabled("Checksum published with the release");
       return (
-        `<a class="btn btn-secondary" data-rel-link="checksum" href="${escapeHtml(companion.checksumUrl)}" ` +
+        `<a ${v("secondary")}data-rel-link="checksum"${variantAttr(attrs)} href="${escapeHtml(companion.checksumUrl)}" ` +
         `download="${escapeHtml(companion.filename)}.sha256">Download the .sha256 file</a>`
       );
 
     case "forge":
       if (!forgeReady) return disabled(rel.forge?.pendingLabel || "Forge release pending");
       return (
-        `<a class="btn btn-secondary" data-rel-link="forge" href="${escapeHtml(rel.forge.url)}" ` +
-        `target="_blank" rel="noopener noreferrer">Get the extension on the Forge ↗</a>`
+        `<a ${v("primary")}data-rel-link="forge"${variantAttr(attrs)} href="${escapeHtml(rel.forge.url)}" ` +
+        `target="_blank" rel="noopener noreferrer">Get Nerve on Forge ↗</a>`
+      );
+
+    case "forum":
+      if (!forumReady) return disabled("Forum thread not published yet");
+      return (
+        `<a ${v("secondary")}data-rel-link="forum"${variantAttr(attrs)} href="${escapeHtml(rel.community.forumUrl)}" ` +
+        `target="_blank" rel="noopener noreferrer">Discussion and bug reports ↗</a>`
+      );
+
+    case "support":
+      if (!isHttps(rel.support?.url)) return disabled("Support options published with the listing");
+      return (
+        `<a ${v("ghost")}data-rel-link="support"${variantAttr(attrs)} href="${escapeHtml(rel.support.url)}" ` +
+        `target="_blank" rel="noopener noreferrer">${escapeHtml(rel.support.label || "Support Nerve on Forge")} ↗</a>`
       );
 
     default:
@@ -230,23 +282,33 @@ function renderStatus(kind) {
 /* ---------- rewriting ---------- */
 
 const RE_REL = /<([a-z]+)([^>]*\sdata-rel="([a-zA-Z0-9._-]+)"[^>]*)>([\s\S]*?)<\/\1>/g;
-const RE_LINK = /<([a-z]+)([^>]*\sdata-rel-link="(companion|checksum|forge|donate)"[^>]*)>([\s\S]*?)<\/\1>/g;
+const RE_LINK = /<([a-z]+)([^>]*\sdata-rel-link="(companion|checksum|forge|forum|support)"[^>]*)>([\s\S]*?)<\/\1>/g;
+const RE_HREF = /<a([^>]*\sdata-rel-href="(companion|checksum|forge|forum|support)"[^>]*)>/g;
+
+/* The live URL for each target, or "" when it is not published. */
+const HREF = {
+  companion: companionReady ? companion.url : "",
+  checksum: checksumReady ? companion.checksumUrl : "",
+  forge: forgeReady ? rel.forge.url : "",
+  forum: forumReady ? rel.community.forumUrl : "",
+  support: isHttps(rel.support?.url) ? rel.support.url : ""
+};
 const RE_STATUS = /<span([^>]*\sdata-rel-status="(companion|forge)"[^>]*)>([\s\S]*?)<\/span>/g;
 const RE_NOTE = /<p([^>]*\sdata-rel-note="(companion|forge)"[^>]*)>/g;
-const RE_WHEN = /<([a-z]+)([^>]*\sdata-rel-when="(companion|forge|feedbackForm)(:not)?"[^>]*)>/g;
+const RE_WHEN = /<([a-z]+)([^>]*\sdata-rel-when="(companion|forge|forum|feedbackForm|forgeInstallVerified)(:not)?"[^>]*)>/g;
 
 const stripHidden = (attrs) => attrs.replace(/\shidden(="[^"]*")?(?=\s|$)/g, "");
 
 function rewrite(html) {
   let out = html;
 
-  out = out.replace(RE_LINK, (whole, tag, attrs, kind, inner) => {
-    if (kind === "donate") {
-      const url = rel.support?.donateUrl || "";
-      if (!isHttps(url)) return whole;
-      return `<${tag}${attrs.replace(/\shref="[^"]*"/, ` href="${escapeHtml(url)}"`)}>${inner}</${tag}>`;
-    }
-    return renderLink(kind);
+  out = out.replace(RE_LINK, (_whole, _tag, attrs, kind) => renderLink(kind, attrs));
+
+  /* href-only: keep the element and everything inside it, just repoint it. */
+  out = out.replace(RE_HREF, (whole, attrs, kind) => {
+    const url = HREF[kind];
+    if (!url) return whole; /* not published — leave the page exactly as authored */
+    return `<a${attrs.replace(/\shref="[^"]*"/, ` href="${escapeHtml(url)}"`)}>`;
   });
 
   out = out.replace(RE_STATUS, (_w, _a, kind) => renderStatus(kind));
@@ -299,6 +361,9 @@ console.log(
   `\n  Nerve ${data.versionLabel} — ${scanned} page(s) scanned, ${changed} rewritten.\n` +
   `  companion:     ${companionReady ? `PUBLISHED  ${companion.filename}  ${companion.sizeLabel}` : "pending (no clickable link rendered)"}\n` +
   (companionReady ? `  sha256:        ${companion.sha256}\n` : "") +
-  `  forge:         ${forgeReady ? "published" : "pending (no clickable link rendered)"}\n` +
+  `  forge:         ${forgeReady ? "PUBLISHED  " + rel.forge.url : "pending (no clickable link rendered)"}\n` +
+  `  forge install: ${forgeInstallVerified ? "verified" : "NOT yet tested end to end — site says so"}\n` +
+  `  forum:         ${forumReady ? rel.community.forumUrl : "not set"}\n` +
+  `  support:       ${isHttps(rel.support?.url) ? rel.support.url : "not set"}\n` +
   `  feedback form: ${feedbackFormReady ? "enabled" : "hidden (email route shown instead)"}\n`
 );
