@@ -5,20 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Backchannel Studios — Games, Tabletop Apps &amp; VFX</title>
   <meta name="description" content="Backchannel Studios is an independent studio and production house building immersive games, tabletop companion middleware, and cinematic special effects for stage and screen." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><circle cx=%2216%22 cy=%2216%22 r=%2216%22 fill=%22%23ff5a2e%22/></svg>" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/mark-32.png" />
+  <link rel="apple-touch-icon" href="/assets/mark-180.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0b0d" />
+  <link rel="canonical" href="https://www.thebackchannel.studio/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Backchannel Studios" />
+  <meta property="og:title" content="Backchannel Studios — Games, Tabletop Apps &amp; VFX" />
+  <meta property="og:description" content="An independent studio and production house building immersive games, tabletop companion middleware, and cinematic special effects for stage and screen." />
+  <meta property="og:url" content="https://www.thebackchannel.studio/" />
+  <meta property="og:image" content="https://www.thebackchannel.studio/assets/og-backchannel.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="The Backchannel Studio logo beside the studio name and its four disciplines." />
+  <meta name="twitter:card" content="summary_large_image" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 
+  <a class="skip-link" href="#main">Skip to main content</a>
+
   <header class="site-header">
-    <nav class="nav">
-      <a class="logo" href="index.html"><span class="dot"></span>BACKCHANNEL.</a>
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="/"><img src="/assets/mark-96.png" width="30" height="30" alt="" />BACKCHANNEL.</a>
       <div class="nav-links">
         <a href="#services">Services</a>
-        <a href="projects.html">Projects</a>
+        <a href="/projects">Projects</a>
+        <a href="/nerve">Nerve</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
       </div>
@@ -29,14 +49,14 @@
     </nav>
   </header>
 
-  <main>
+  <main id="main">
     <!-- HERO -->
     <section class="hero">
       <span class="eyebrow">Independent Studio &amp; Production House</span>
       <h1>Bridging imagination and reality.</h1>
       <p class="lede">We build immersive games, tabletop companion middleware, and cinematic special effects for stage and screen.</p>
       <div class="btn-row">
-        <a class="btn btn-primary" href="projects.html">Explore Our Work</a>
+        <a class="btn btn-primary" href="/projects">Explore Our Work</a>
         <a class="btn btn-secondary" href="#contact">Get in Touch</a>
       </div>
     </section>
@@ -93,21 +113,22 @@
             <span class="kicker">Flagship Projects</span>
             <h2>A glimpse at our active development pipelines.</h2>
           </div>
-          <a class="btn btn-secondary" href="projects.html">View All Projects →</a>
+          <a class="btn btn-secondary" href="/projects">View All Projects →</a>
         </div>
 
         <div class="project-grid">
           <article class="project-card">
             <span class="tag">Tabletop Middleware</span>
             <h3><span class="name">Nerve</span></h3>
-            <p class="desc">Local AI-to-application middleware platform providing structured, permissioned access for virtual tabletop sessions.</p>
-            <a class="learn-more" href="projects.html#nerve">Learn more →</a>
+            <span class="alpha-badge" style="align-self:flex-start">Free Alpha</span>
+            <p class="desc">Local AI-to-application middleware platform providing structured, permissioned access for virtual tabletop sessions. The Fantasy Grounds alpha is free and open to testers.</p>
+            <a class="learn-more" href="/nerve">Learn more →</a>
           </article>
           <article class="project-card">
             <span class="tag">Board Game &amp; Mobile App</span>
             <h3><span class="name">Brush Pass</span></h3>
             <p class="desc">An intense tactical bluffing and negotiation board game with an accompanying companion mobile app ecosystem.</p>
-            <a class="learn-more" href="projects.html#brush-pass">Learn more →</a>
+            <a class="learn-more" href="/projects#brush-pass">Learn more →</a>
           </article>
         </div>
       </div>
@@ -150,10 +171,14 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
-      <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+      <nav aria-label="Footer">
+        <a href="/nerve/privacy">Privacy</a>
+        <a href="/nerve/terms">Terms</a>
+        <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+      </nav>
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="/script.js"></script>
 </body>
 </html>

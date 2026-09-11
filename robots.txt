@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /nerve/terms
+Disallow: /api/
+Disallow: /tools/
+Disallow: /HANDOFF.md
+
+Sitemap: https://www.thebackchannel.studio/sitemap.xml
