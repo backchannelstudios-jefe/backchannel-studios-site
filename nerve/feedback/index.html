@@ -69,9 +69,9 @@
         <span class="alpha-badge">Free Alpha</span>
       </div>
       <p class="page-lede">
-        Reporting what broke is the most useful thing an alpha tester can do. Tell us the
-        category, a one-line summary and what happened; everything else helps us reproduce it
-        faster.
+        Reporting what broke is the most useful thing an alpha tester can do. There are two
+        routes: the <strong>public forum thread</strong> for anything another tester might
+        recognise, and <strong>email</strong> for anything you would rather not post in the open.
       </p>
 
       <div class="callout callout--warn">
@@ -92,10 +92,29 @@
 
       <!-- Email route: shown while release.json has feedback.formEnabled = false. -->
       <div data-rel-when="feedbackForm:not">
-        <h2 id="how-to-report">How to send a report</h2>
+        <h2 id="public">Public — the forum thread</h2>
         <p>
-          Email us and we will read it. Please put the summary in the subject line so it is
-          searchable later.
+          The Fantasy Grounds thread for Nerve is the best place for questions other testers can
+          answer, and it is where we post known issues. Start here unless your report contains
+          something private.
+        </p>
+        <div class="actions">
+          <a class="btn btn-primary" data-rel-link="forum" data-rel-variant="primary" href="https://www.fantasygrounds.com/forums/showthread.php?88108" target="_blank" rel="noopener noreferrer">Discussion and bug reports ↗</a>
+        </div>
+        <div class="callout callout--warn">
+          <span class="callout-title">A forum post is public — redact first</span>
+          <p>
+            Before posting, take out personal information, credentials and anything from a private
+            campaign. <strong>Do not attach a support bundle to a public post</strong> — if we need
+            one we will ask, and you can send it privately. Everything in the "please do not
+            include" list above applies twice over in the open.
+          </p>
+        </div>
+
+        <h2 id="private">Private — email</h2>
+        <p>
+          For anything you would rather not post publicly, email us and we will read it. Put the
+          summary in the subject line so it is searchable later.
         </p>
         <div class="actions">
           <a class="btn btn-primary" href="mailto:backchannelstudios1@gmail.com?subject=Nerve%20alpha%20feedback&amp;body=Category%20(bug%20%2F%20suggestion%20%2F%20performance)%3A%0A%0ASummary%3A%0A%0AWhat%20happened%3A%0A%0A---%20For%20bugs%2C%20as%20much%20of%20this%20as%20you%20have%20---%0ANerve%20version%3A%0AFantasy%20Grounds%20version%3A%0ARuleset%3A%0AAI%20provider%3A%0AExact%20error%20code%20(with%20the%20detail%20text%20underneath%20it)%3A%0ASteps%20to%20reproduce%3A%0AExpected%3A%0AActual%3A%0ADid%20an%20approved%20action%20show%20up%20in%20the%20native%20record%3F%3A%0A">Email your report</a>
@@ -107,7 +126,7 @@
           include whatever you can.
         </p>
 
-        <h3>What to include</h3>
+        <h3 id="what-to-include">What to include, either route</h3>
         <p>Three things are essential:</p>
         <ul>
           <li><strong>Category</strong> — bug, suggestion, or performance observation.</li>
@@ -116,10 +135,11 @@
         </ul>
         <p>For a bug, these make it far easier to reproduce. <strong>"Unknown" is a fine answer</strong> — a report with gaps beats no report:</p>
         <ul>
-          <li>Nerve version, Fantasy Grounds version, ruleset, and which AI provider you selected.</li>
+          <li>Nerve version, Fantasy Grounds version, ruleset, and which AI provider or model you selected.</li>
           <li>The exact error code, <em>including the detail text underneath it</em> — the detail often matters more than the code.</li>
           <li>Steps to reproduce from a known starting point, plus what you expected and what actually happened.</li>
-          <li>Optional but useful: response time in seconds, solo or multiplayer, other extensions enabled, and whether an approved action showed up in the native record.</li>
+          <li>Response time in seconds, if the problem is about speed or a timeout.</li>
+          <li>Optional but useful: solo or multiplayer, other extensions enabled, and whether an approved action showed up in the native record.</li>
         </ul>
       </div>
 
@@ -317,7 +337,8 @@
       <h2 id="what-happens">What happens to your report</h2>
       <ul>
         <li>Reports are text only. We do not want a diagnostic bundle or a campaign archive here.</li>
-        <li>What you send is not published by us.</li>
+        <li><strong>Anything you post in the forum thread is public</strong> and is not ours to take down. Email is the route for anything private.</li>
+        <li>What you send us by email is not published by us.</li>
         <li data-rel-when="feedbackForm" hidden>
           You get a reference number the moment a report is actually stored. If storage fails you
           get an error and your text stays in the form — we never show a success message for a
