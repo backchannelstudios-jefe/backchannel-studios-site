@@ -58,7 +58,6 @@
       <a href="/nerve/releases">Releases</a>
       <a href="/nerve/feedback" aria-current="page">Feedback</a>
       <a href="/nerve/privacy">Privacy</a>
-      <a href="/nerve/terms">Terms</a>
     </nav>
   </div>
 
@@ -70,8 +69,9 @@
         <span class="alpha-badge">Free Alpha</span>
       </div>
       <p class="page-lede">
-        Reporting what broke is the most useful thing an alpha tester can do. Three fields are
-        required; everything else helps us reproduce the problem faster.
+        Reporting what broke is the most useful thing an alpha tester can do. Tell us the
+        category, a one-line summary and what happened; everything else helps us reproduce it
+        faster.
       </p>
 
       <div class="callout callout--warn">
@@ -83,31 +83,47 @@
           <li>Plot spoilers your group has not reached.</li>
         </ul>
         <p>
-          This form accepts <strong>text only</strong>. Do not paste in a diagnostic bundle or a
+          Send <strong>text only</strong>. Do not attach or paste a diagnostic bundle or a
           campaign archive, and do not link to one. If we need a
           <a href="/nerve/setup#support-bundle">support bundle</a>, we will ask you for it and
           take it privately — review its contents yourself before sending it anywhere.
         </p>
       </div>
 
-      <!-- ============ OWNER INPUT REQUIRED — see /nerve/privacy ============ -->
-      <div class="owner-input" data-owner-input="feedback-destination">
-        <span class="callout-title">Not yet live — owner input required</span>
+      <!-- Email route: shown while release.json has feedback.formEnabled = false. -->
+      <div data-rel-when="feedbackForm:not">
+        <h2 id="how-to-report">How to send a report</h2>
         <p>
-          <strong>This form is built but not connected.</strong> The destination reports are
-          routed to, and the storage, access and retention practices described on the
-          <a href="/nerve/privacy">privacy page</a>, still need to be chosen and approved by the
-          product owner. Until that is done the endpoint is disabled and will return an error
-          rather than silently dropping a report.
+          Email us and we will read it. Please put the summary in the subject line so it is
+          searchable later.
         </p>
-        <p>
-          In the meantime, email
-          <a href="mailto:backchannelstudios1@gmail.com?subject=Nerve%20alpha%20feedback">backchannelstudios1@gmail.com</a>
-          with the same information.
+        <div class="actions">
+          <a class="btn btn-primary" href="mailto:backchannelstudios1@gmail.com?subject=Nerve%20alpha%20feedback&amp;body=Category%20(bug%20%2F%20suggestion%20%2F%20performance)%3A%0A%0ASummary%3A%0A%0AWhat%20happened%3A%0A%0A---%20For%20bugs%2C%20as%20much%20of%20this%20as%20you%20have%20---%0ANerve%20version%3A%0AFantasy%20Grounds%20version%3A%0ARuleset%3A%0AAI%20provider%3A%0AExact%20error%20code%20(with%20the%20detail%20text%20underneath%20it)%3A%0ASteps%20to%20reproduce%3A%0AExpected%3A%0AActual%3A%0ADid%20an%20approved%20action%20show%20up%20in%20the%20native%20record%3F%3A%0A">Email your report</a>
+        </div>
+        <p class="support-note">
+          That button opens your mail client with the checklist below already filled in. If it
+          does not work, write to
+          <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a> and
+          include whatever you can.
         </p>
+
+        <h3>What to include</h3>
+        <p>Three things are essential:</p>
+        <ul>
+          <li><strong>Category</strong> — bug, suggestion, or performance observation.</li>
+          <li><strong>A one-line summary</strong>, in the words you would use to search for it later.</li>
+          <li><strong>What happened</strong> — what you were doing, what you saw, what you already ruled out.</li>
+        </ul>
+        <p>For a bug, these make it far easier to reproduce. <strong>"Unknown" is a fine answer</strong> — a report with gaps beats no report:</p>
+        <ul>
+          <li>Nerve version, Fantasy Grounds version, ruleset, and which AI provider you selected.</li>
+          <li>The exact error code, <em>including the detail text underneath it</em> — the detail often matters more than the code.</li>
+          <li>Steps to reproduce from a known starting point, plus what you expected and what actually happened.</li>
+          <li>Optional but useful: response time in seconds, solo or multiplayer, other extensions enabled, and whether an approved action showed up in the native record.</li>
+        </ul>
       </div>
 
-      <form class="form" id="feedback-form" method="post" action="/api/feedback" novalidate>
+      <form class="form" id="feedback-form" method="post" action="/api/feedback" novalidate data-rel-when="feedbackForm" hidden>
 
         <div class="form-status" id="form-status" role="status" aria-live="polite" tabindex="-1"></div>
 
@@ -300,20 +316,19 @@
 
       <h2 id="what-happens">What happens to your report</h2>
       <ul>
-        <li>Reports are text only and are validated on the server before they are stored.</li>
-        <li>
+        <li>Reports are text only. We do not want a diagnostic bundle or a campaign archive here.</li>
+        <li>What you send is not published by us.</li>
+        <li data-rel-when="feedbackForm" hidden>
           You get a reference number the moment a report is actually stored. If storage fails you
           get an error and your text stays in the form — we never show a success message for a
           report that did not arrive.
         </li>
-        <li>
-          The form is rate limited. There is no CAPTCHA and no puzzle to solve; spam protection
-          is a hidden field and a timing check that a real person never notices.
+        <li data-rel-when="feedbackForm" hidden>
+          The form is rate limited. There is no CAPTCHA and no puzzle to solve.
         </li>
         <li>
-          Where reports are stored, who can read them, and how long they are kept are described
-          on the <a href="/nerve/privacy">privacy page</a>. We are not going to invent a
-          retention period or a response-time promise we have not committed to.
+          We cannot promise a response time, so we are not going to print one. How report data is
+          handled is described on the <a href="/nerve/privacy">privacy page</a>.
         </li>
       </ul>
 
@@ -330,8 +345,7 @@
       <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
       <nav aria-label="Footer">
         <a href="/nerve/privacy">Privacy</a>
-        <a href="/nerve/terms">Terms</a>
-        <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+          <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
       </nav>
     </div>
   </footer>
