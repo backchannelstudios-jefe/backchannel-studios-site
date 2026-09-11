@@ -58,7 +58,6 @@
       <a href="/nerve/releases">Releases</a>
       <a href="/nerve/feedback">Feedback</a>
       <a href="/nerve/privacy">Privacy</a>
-      <a href="/nerve/terms">Terms</a>
     </nav>
   </div>
 
@@ -77,19 +76,28 @@
           Bring your own compatible AI account and help shape the product through feedback.
         </p>
         <p class="release-line">
-          Release candidate <strong data-rel="version">0.67.1-alpha</strong>
+          Release <strong data-rel="versionLabel">0.67.1 (alpha)</strong>
           · <strong data-rel="platform">Windows 10 / 11 (64-bit)</strong>
           · <strong data-rel="ruleset">Fantasy Grounds Unity — 5E</strong>
         </p>
 
         <!-- 2. PRIMARY AND SECONDARY ACTIONS -->
         <div class="actions">
-          <a class="btn btn-primary" href="/nerve/setup">Get started →</a>
-          <a class="btn btn-secondary" href="/nerve/downloads">Download Windows companion</a>
+          <a class="btn btn-primary" href="/nerve/downloads">View release status →</a>
+          <a class="btn btn-secondary" href="/nerve/setup">Read the setup guide</a>
         </div>
         <div class="actions actions-secondary">
           <a class="btn btn-ghost" href="/nerve/feedback">Report feedback</a>
           <a class="btn btn-ghost" data-rel-link="donate" href="https://buymeacoffee.com/backchannelstudios" target="_blank" rel="noopener noreferrer">Support development ↗</a>
+        </div>
+        <div class="callout callout--warn" style="margin-top:26px" data-rel-when="forge:not">
+          <span class="callout-title">Release preview — you cannot complete a setup yet</span>
+          <p>
+            The Windows companion is available to download now. <strong>The Fantasy Grounds
+            extension has not been released yet</strong>, and Nerve needs both halves to run, so
+            there is nothing playable here today. Download the companion if you want to stage it
+            early; <a href="/nerve/downloads">release status</a> tracks the extension.
+          </p>
         </div>
         <p class="support-note">
           No registration, checkout, subscription, donation or newsletter signup is required to
@@ -180,9 +188,10 @@
           <h3>The local Windows companion</h3>
           <p>
             A bridge that runs on your own machine, on the same host as the campaign. It receives
-            requests from the extension, holds your provider selection and sign-in, and passes
-            requests out to the AI application you chose. It also applies the guard rails that
-            decide which actions need your approval.
+            requests from the extension, stores your provider selection and launches the selected
+            AI integration, and passes requests out to it. <strong>Authentication remains with the
+            provider application</strong> — Nerve does not hold your provider credentials. It also
+            applies the guard rails that decide which actions need your approval.
           </p>
         </li>
         <li>
@@ -211,7 +220,7 @@
         <div>
           <ul class="check-list">
             <li><strong>Prompts and rolls.</strong> Asking for a roll, and responding to one.</li>
-            <li><strong>Supported guarded actions.</strong> A defined set of actions that can change campaign records, with an approval step in front of them.</li>
+            <li><strong>Flow Mode and guarded actions.</strong> In Flow Mode, supported narration, proxy actions and pacing can run automatically, including supported exact-source encounters. Guarded actions still require your approval.</li>
           </ul>
         </div>
       </div>
@@ -233,7 +242,8 @@
         </li>
         <li>
           <strong>Inventory, payment and reward bookkeeping is not a complete workflow.</strong>
-          Verify before making a manual correction, or you will create duplicates.
+          Check the record before making a manual correction — an unchecked correction may
+          duplicate an update that already applied.
         </li>
         <li>
           <strong>Quest completion is hard to see.</strong> It can be updated through supported
@@ -245,8 +255,8 @@
         </li>
         <li>
           <strong>Responses can be slow or rate-limited.</strong> Built-in listeners normally time
-          out after three minutes. Clicking Call Nerve repeatedly while a response is in flight
-          does not help.
+          out after three minutes. Avoid repeated Call Nerve clicks while responding; they do not
+          speed up the current request.
         </li>
         <li>
           <strong>Story Cues are reference only.</strong> They do not move characters and do not
@@ -264,9 +274,10 @@
         data does not stay on your computer</strong>. Selected campaign context and source
         references are sent to the external AI provider you choose, and that can include GM-only
         material — "GM-only" governs what players see in Fantasy Grounds, not what the provider
-        receives. Your provider's policies and retention apply, and your AI account costs and
-        allowances are separate from Nerve. Get your group's agreement before you put their
-        campaign through a provider.
+        receives. Your provider's policies and retention apply. Provider charges and account limits
+        are controlled by your provider: Nerve does not include an AI allowance or guarantee a
+        spending cap for signed-in application usage. Get your group's agreement before you put
+        their campaign through a provider.
       </p>
       <p><a href="/nerve/privacy">Read the full privacy and data-flow page →</a></p>
 
@@ -326,8 +337,7 @@
       <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
       <nav aria-label="Footer">
         <a href="/nerve/privacy">Privacy</a>
-        <a href="/nerve/terms">Terms</a>
-        <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+          <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
       </nav>
     </div>
   </footer>

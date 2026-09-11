@@ -1,45 +1,67 @@
 {
-  "_comment": [
-    "SINGLE SOURCE OF TRUTH for every Nerve version number, date and download link on the site.",
-    "Edit this file only — never edit version numbers inside the HTML by hand.",
-    "`npm run build` (which Vercel runs automatically on every deploy) rewrites every",
-    "element marked data-rel=\"...\" and data-rel-link=\"...\" in the HTML from the values below.",
+  "_howToPublishANewCompanionBuild": [
+    "THIS FILE IS THE ONLY PLACE YOU EDIT. Three steps, no hand-computed hashes:",
     "",
-    "status values:",
-    "  companion.status : \"pending\" | \"available\"",
-    "  forge.status     : \"pending\" | \"available\"",
-    "A link is rendered as a real, clickable button ONLY when its status is \"available\"",
-    "AND its url is a non-empty https:// URL. Otherwise it renders as a non-clickable,",
-    "disabled control carrying the pendingLabel. This is deliberate: the acceptance",
-    "checklist requires that no placeholder link is ever clickable."
+    "  1. Upload the new ZIP to  downloads/nerve/<version>-<channel>/  on GitHub.",
+    "     Use a NEW folder every time. Never replace a file at a path already published.",
+    "  2. In this file, set: version, channel, releaseDate, and companion.path.",
+    "  3. Commit. That's it.",
+    "",
+    "On every deploy `npm run build` reads the actual ZIP and fills in the rest itself:",
+    "the SHA-256, the exact byte size, the human-readable size, the download URL and the",
+    "filename, then writes the matching .sha256 sidecar next to the ZIP. Because the hash",
+    "is computed from the very bytes being served, the published checksum can never drift",
+    "from the published file.",
+    "",
+    "The build REFUSES to publish and fails loudly if: the ZIP named in companion.path is",
+    "missing, the version string does not appear in the filename, or a status is set to",
+    "'available' without the things that status requires. A failed build leaves the",
+    "previous deployment serving, so a mistake here cannot break the live site.",
+    "",
+    "status values: 'pending' | 'available'.",
+    "A download or Forge link is rendered as a real, clickable control ONLY when its",
+    "status is 'available' and its target actually exists. Otherwise it renders as a",
+    "non-clickable disabled control. Set a status back to 'pending' to unpublish;",
+    "the pages round-trip byte-for-byte."
   ],
-  "version": "0.67.1-alpha",
+
+  "version": "0.67.1",
   "channel": "alpha",
-  "releaseDate": "",
-  "releaseDateLabel": "",
-  "extensionVersion": "0.67.1-alpha",
+  "releaseDate": "2026-09-11",
+
+  "extensionVersion": "0.67.1",
   "nodeMinimum": "22",
   "platform": "Windows 10 / 11 (64-bit)",
   "ruleset": "Fantasy Grounds Unity — 5E",
   "rulesetShort": "5E",
+
   "companion": {
-    "status": "pending",
-    "filename": "Nerve-Windows-Companion-0.67.1-alpha.zip",
-    "url": "",
-    "sizeLabel": "",
-    "sha256": "",
-    "checksumUrl": "",
+    "status": "available",
+    "path": "downloads/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip",
     "pendingLabel": "Companion download pending approval"
   },
+
   "forge": {
     "status": "pending",
     "url": "",
     "itemName": "Nerve",
     "pendingLabel": "Forge release pending"
   },
+
+  "feedback": {
+    "formEnabled": false,
+    "_comment": [
+      "Set formEnabled to true ONLY after RESEND_API_KEY, FEEDBACK_TO and FEEDBACK_FROM",
+      "are set in the Vercel project's environment variables. While it is false the",
+      "feedback page hides the form entirely and presents the email route instead, so no",
+      "tester fills in a long form only to be told the endpoint is off."
+    ]
+  },
+
   "support": {
     "donateUrl": "https://buymeacoffee.com/backchannelstudios"
   },
+
   "contact": {
     "studioEmail": "backchannelstudios1@gmail.com"
   }
