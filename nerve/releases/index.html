@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nerve Release Notes — Free Alpha | Backchannel Studios</title>
+  <meta name="description" content="Nerve version history, per-release known issues, version pairing between the Fantasy Grounds extension and the Windows companion, and how to update each half." />
+  <link rel="canonical" href="https://www.thebackchannel.studio/nerve/releases" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/mark-32.png" />
+  <link rel="apple-touch-icon" href="/assets/mark-180.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0b0d" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Backchannel Studios" />
+  <meta property="og:title" content="Nerve Release Notes — Free Alpha" />
+  <meta property="og:description" content="Version history, known issues and update instructions for the Nerve alpha." />
+  <meta property="og:url" content="https://www.thebackchannel.studio/nerve/releases" />
+  <meta property="og:image" content="https://www.thebackchannel.studio/assets/og-nerve.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Nerve AI emblem beside the words Nerve, Free Alpha, from Backchannel Studios." />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="/"><img src="/assets/mark-96.png" width="30" height="30" alt="" />BACKCHANNEL.</a>
+      <div class="nav-links">
+        <a href="/#services">Services</a>
+        <a href="/projects">Projects</a>
+        <a href="/nerve">Nerve</a>
+        <a href="/#about">About</a>
+        <a href="/#contact">Contact</a>
+      </div>
+      <a class="nav-cta" href="/#contact">Get in Touch</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="subnav">
+    <nav class="subnav-inner" aria-label="Nerve pages">
+      <a href="/nerve">Overview</a>
+      <a href="/nerve/setup">Setup</a>
+      <a href="/nerve/downloads">Downloads</a>
+      <a href="/nerve/releases" aria-current="page">Releases</a>
+      <a href="/nerve/feedback">Feedback</a>
+      <a href="/nerve/privacy">Privacy</a>
+      <a href="/nerve/terms">Terms</a>
+    </nav>
+  </div>
+
+  <main id="main">
+    <div class="doc doc-narrow">
+
+      <div class="title-row">
+        <h1 class="page-title">Release notes</h1>
+        <span class="alpha-badge">Free Alpha</span>
+      </div>
+      <p class="page-lede">
+        Version history, what changed, what is known to be broken, and which extension version
+        goes with which companion.
+      </p>
+
+      <h2 id="pairing">Version pairing</h2>
+      <p>
+        The Fantasy Grounds extension and the Windows companion are versioned together. Running
+        one half ahead of the other is a supported way to get confusing behaviour, so check this
+        table before updating either.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <caption>Extension and companion pairing</caption>
+          <thead>
+            <tr>
+              <th scope="col">Release</th>
+              <th scope="col">Extension</th>
+              <th scope="col">Companion</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" data-rel="version">0.67.1-alpha</th>
+              <td data-rel="extensionVersion">0.67.1-alpha</td>
+              <td data-rel="companion.filename">Nerve-Windows-Companion-0.67.1-alpha.zip</td>
+              <td><span class="status status--pending" data-rel-status="companion">Pending owner approval</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr class="rule" />
+
+      <h2 id="current"><span data-rel="version">0.67.1-alpha</span> — release candidate</h2>
+      <p style="font-family:var(--mono);font-size:13px;color:var(--text-faint)">
+        <span data-rel="releaseDateLabel">not yet published</span>
+        · <span data-rel="platform">Windows 10 / 11 (64-bit)</span>
+        · <span data-rel="ruleset">Fantasy Grounds Unity — 5E</span>
+      </p>
+
+      <div class="callout callout--pending">
+        <span class="callout-title">Not yet a public release</span>
+        <p>
+          This version is a <strong>candidate</strong>. The product owner has to approve the
+          actual public release and its artifacts before any download link here goes live. The
+          installer ownership fix is implemented and tested offline; Forge moderation, download
+          and update delivery, and clean-profile public installation have <strong>not</strong>
+          been validated yet, and this page will not imply otherwise.
+        </p>
+      </div>
+
+      <h3>Requirements for this release</h3>
+      <ul>
+        <li>Windows GM host — <span data-rel="platform">Windows 10 / 11 (64-bit)</span>.</li>
+        <li>Fantasy Grounds Unity running the <span data-rel="rulesetShort">5E</span> ruleset.</li>
+        <li>Node.js <span data-rel="nodeMinimum">22</span> or newer.</li>
+        <li>A compatible external AI application and account. Not included, not billed by us.</li>
+        <li>Matching extension version <span data-rel="extensionVersion">0.67.1-alpha</span> from the Forge.</li>
+      </ul>
+
+      <h3>Changes in this candidate</h3>
+      <ul>
+        <li>Installer ownership fix — implemented and tested offline.</li>
+      </ul>
+
+      <h3>Known issues in this candidate</h3>
+      <ul class="caution-list">
+        <li>
+          Narration does not prove that an inventory, currency, quest or combat record was
+          actually changed. Check the native record.
+        </li>
+        <li>
+          Inventory, payment and reward transactions are not a complete workflow. Verify before
+          correcting anything manually, or you will double-apply the change.
+        </li>
+        <li>
+          Quest completion can be updated through supported actions, but completion is not
+          clearly visible in the standard quest interface.
+        </li>
+        <li>
+          On Grok, a detailed "Rate limited" message can surface underneath
+          <code>APP_LISTENER_PROTOCOL_FAILED</code>. Read the detail text — a timeout on its own
+          is not evidence of subscription throttling.
+        </li>
+        <li>
+          Built-in listeners normally time out after three minutes. Repeated Call Nerve clicks
+          while a response is in flight do not help.
+        </li>
+        <li>
+          Story Cues supply reference context only. They do not move characters and do not
+          automatically reveal records.
+        </li>
+        <li>
+          Provider and multiplayer testing is incomplete. We are not turning a handful of local
+          comparisons into provider rankings or upgrade recommendations.
+        </li>
+      </ul>
+
+      <h3>Updating to this release</h3>
+      <ol>
+        <li>Back up the campaign first.</li>
+        <li>Update the Forge item, then run the Fantasy Grounds updater so the extension is actually downloaded.</li>
+        <li>Download the matching companion ZIP, verify its checksum, extract it completely and run <code>Install-Nerve.cmd</code>.</li>
+        <li>Load the campaign and confirm the reported version matches.</li>
+      </ol>
+      <p>
+        Coming from a developer preview? Follow the
+        <a href="/nerve/setup#migration">migration steps</a> before installing — the old
+        <code>extensions/Nerve</code> folder has to be moved out of <code>extensions</code>
+        first. Never delete campaign data.
+      </p>
+
+      <hr class="rule" />
+
+      <h2 id="history">Earlier releases</h2>
+      <p>
+        There are no earlier <em>public</em> releases. Developer-preview builds circulated
+        privately during development and are not published here; if you are running one, treat
+        the migration steps above as required rather than optional.
+      </p>
+      <p>
+        Once releases are published, each approved version keeps its own permanent, versioned
+        address so you can roll back. We never replace the bytes at an address that has already
+        been published, and older releases carry a compatibility warning where they need a
+        different extension version.
+      </p>
+
+      <p class="page-meta">
+        Every version number on this site is generated from a single release record, so the
+        setup, downloads and release pages cannot drift apart. Fantasy Grounds and the Forge are
+        operated by SmiteWorks, which has not endorsed or certified this product.
+      </p>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
+      <nav aria-label="Footer">
+        <a href="/nerve/privacy">Privacy</a>
+        <a href="/nerve/terms">Terms</a>
+        <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/script.js"></script>
+</body>
+</html>
