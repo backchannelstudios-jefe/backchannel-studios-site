@@ -97,8 +97,12 @@ if (companion.status === "available") {
       /* Write the sidecar in the standard `sha256sum` format. */
       const sidecar = `${companion.sha256}  ${companion.filename}\n`;
       const sidecarPath = abs + ".sha256";
+      /* Compare on content, not line endings: a CRLF checkout must not look
+         like a change, or every fresh clone on Windows reports a dirty file. */
       const existing = await readFile(sidecarPath, "utf8").catch(() => null);
-      if (existing !== sidecar) {
+      const same = existing !== null &&
+        existing.replace(/\r\n/g, "\n") === sidecar.replace(/\r\n/g, "\n");
+      if (!same) {
         await writeFile(sidecarPath, sidecar, "utf8");
         console.log("  wrote    " + relative(ROOT, sidecarPath));
       }
