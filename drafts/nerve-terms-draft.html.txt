@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nerve Alpha Terms — Free Alpha | Backchannel Studios</title>
+  <meta name="description" content="Usage terms for the Nerve free alpha. Final wording is pending product-owner approval; this page states only what has been confirmed." />
+  <meta name="robots" content="noindex" />
+  <link rel="canonical" href="https://www.thebackchannel.studio/nerve/terms" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/mark-32.png" />
+  <link rel="apple-touch-icon" href="/assets/mark-180.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0b0d" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Backchannel Studios" />
+  <meta property="og:title" content="Nerve Alpha Terms" />
+  <meta property="og:description" content="Usage terms for the Nerve free alpha." />
+  <meta property="og:url" content="https://www.thebackchannel.studio/nerve/terms" />
+  <meta property="og:image" content="https://www.thebackchannel.studio/assets/og-nerve.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Nerve AI emblem beside the words Nerve, Free Alpha, from Backchannel Studios." />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="/"><img src="/assets/mark-96.png" width="30" height="30" alt="" />BACKCHANNEL.</a>
+      <div class="nav-links">
+        <a href="/#services">Services</a>
+        <a href="/projects">Projects</a>
+        <a href="/nerve">Nerve</a>
+        <a href="/#about">About</a>
+        <a href="/#contact">Contact</a>
+      </div>
+      <a class="nav-cta" href="/#contact">Get in Touch</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="subnav">
+    <nav class="subnav-inner" aria-label="Nerve pages">
+      <a href="/nerve">Overview</a>
+      <a href="/nerve/setup">Setup</a>
+      <a href="/nerve/downloads">Downloads</a>
+      <a href="/nerve/releases">Releases</a>
+      <a href="/nerve/feedback">Feedback</a>
+      <a href="/nerve/privacy">Privacy</a>
+    </nav>
+  </div>
+
+  <main id="main">
+    <div class="doc doc-narrow">
+
+      <div class="title-row">
+        <h1 class="page-title">Alpha usage terms</h1>
+        <span class="alpha-badge">Free Alpha</span>
+      </div>
+
+      <div class="owner-input">
+        <span class="callout-title">Draft — not approved for publication</span>
+        <p>
+          <strong>This page is a structural draft, not a legal document, and it should not be
+          linked publicly in its current state.</strong> Licensing, ownership, warranty and
+          liability wording is the product owner's to decide and a lawyer's to draft — not the
+          web team's. What follows is only the set of plain factual statements already confirmed
+          elsewhere in the requirements, laid out so approved wording can be dropped in around
+          them.
+        </p>
+        <p>
+          Section headings marked <strong>owner wording required</strong> below are empty on
+          purpose.
+        </p>
+      </div>
+
+      <h2 id="confirmed">What is already confirmed</h2>
+      <p>These statements are factual and consistent with the rest of the site.</p>
+
+      <h3>Nerve is free during the alpha</h3>
+      <ul>
+        <li>No registration, checkout, subscription, donation or newsletter signup is required to download or use Nerve during the alpha.</li>
+        <li>Optional donations support development. No feature, download or support priority depends on donating.</li>
+        <li>Future stable releases or additional products may be paid. Pricing and availability will be announced separately.</li>
+        <li data-claim-exempt>We make no promise of lifetime access, no claim of tax deductibility, no future discount, and no premium support tier. The existing free Forge item is not being converted into a paid item.</li>
+      </ul>
+
+      <h3>This is alpha software</h3>
+      <ul>
+        <li>Setup and gameplay behaviour are still being tested. Provider and multiplayer coverage are uneven and are not certified.</li>
+        <li>Nerve is not a fully autonomous or fully reliable replacement for a game master, and is not presented as one.</li>
+        <li>Nerve can change campaign records through supported actions. Back up your campaign and test on a copy.</li>
+        <li>Known limitations are published openly on the <a href="/nerve#limitations">overview</a> and <a href="/nerve/releases">release notes</a>.</li>
+      </ul>
+
+      <h3>What you bring, and what you are billed for</h3>
+      <ul>
+        <li>Nerve requires a compatible external AI application and your own account with that provider.</li>
+        <li>AI access, allowance and costs are not included with Nerve. Your provider bills you directly; we do not meter, cap or pay for provider usage.</li>
+        <li>Your provider's own terms and policies govern what you send them. See <a href="/nerve/privacy">privacy and data flow</a>.</li>
+      </ul>
+
+      <h3>Relationship to Fantasy Grounds</h3>
+      <ul>
+        <li>Nerve is a Backchannel Studios product.</li>
+        <li>Fantasy Grounds and the Forge are operated by SmiteWorks. <strong>SmiteWorks has not endorsed, certified or sponsored Nerve</strong>, and nothing on this site should be read as implying that it has.</li>
+        <li>Your use of Fantasy Grounds, the Forge and any licensed content remains governed by their own terms.</li>
+      </ul>
+
+      <hr class="rule" />
+
+      <h2 id="required">Sections requiring owner wording</h2>
+      <div class="owner-input">
+        <span class="callout-title">Owner wording required</span>
+        <ul>
+          <li><strong>Licence grant and scope</strong> — what an alpha tester is permitted to do with the software, and for how long.</li>
+          <li><strong>Ownership and intellectual property</strong> — including anything generated during a session.</li>
+          <li><strong>Feedback licence</strong> — what rights, if any, we take in submitted suggestions.</li>
+          <li><strong>Warranty disclaimer and limitation of liability.</strong></li>
+          <li><strong>Acceptable use and termination.</strong></li>
+          <li><strong>Governing law and the legal entity behind Backchannel Studios.</strong></li>
+          <li><strong>How and when these terms can change</strong>, and how testers are told.</li>
+        </ul>
+        <p>
+          Supply approved text for each of these and it will be implemented verbatim. Until then
+          this page stays marked <code>noindex</code> and should not be advertised as the
+          product's terms of service.
+        </p>
+      </div>
+
+      <p class="page-meta">
+        Questions about these terms: <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>.
+      </p>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
+      <nav aria-label="Footer">
+        <a href="/nerve/privacy">Privacy</a>
+          <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/script.js"></script>
+</body>
+</html>
