@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nerve Feedback — Free Alpha | Backchannel Studios</title>
+  <meta name="description" content="Report a Nerve bug, send a suggestion, or share a performance observation. Text-only reports; you get a reference number when it is received." />
+  <link rel="canonical" href="https://www.thebackchannel.studio/nerve/feedback" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/mark-32.png" />
+  <link rel="apple-touch-icon" href="/assets/mark-180.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0b0d" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Backchannel Studios" />
+  <meta property="og:title" content="Nerve Feedback — Free Alpha" />
+  <meta property="og:description" content="Report a bug, send a suggestion, or share a performance observation from the Nerve alpha." />
+  <meta property="og:url" content="https://www.thebackchannel.studio/nerve/feedback" />
+  <meta property="og:image" content="https://www.thebackchannel.studio/assets/og-nerve.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Nerve AI emblem beside the words Nerve, Free Alpha, from Backchannel Studios." />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="/"><img src="/assets/mark-96.png" width="30" height="30" alt="" />BACKCHANNEL.</a>
+      <div class="nav-links">
+        <a href="/#services">Services</a>
+        <a href="/projects">Projects</a>
+        <a href="/nerve">Nerve</a>
+        <a href="/#about">About</a>
+        <a href="/#contact">Contact</a>
+      </div>
+      <a class="nav-cta" href="/#contact">Get in Touch</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="subnav">
+    <nav class="subnav-inner" aria-label="Nerve pages">
+      <a href="/nerve">Overview</a>
+      <a href="/nerve/setup">Setup</a>
+      <a href="/nerve/downloads">Downloads</a>
+      <a href="/nerve/releases">Releases</a>
+      <a href="/nerve/feedback" aria-current="page">Feedback</a>
+      <a href="/nerve/privacy">Privacy</a>
+      <a href="/nerve/terms">Terms</a>
+    </nav>
+  </div>
+
+  <main id="main">
+    <div class="doc doc-narrow">
+
+      <div class="title-row">
+        <h1 class="page-title">Feedback</h1>
+        <span class="alpha-badge">Free Alpha</span>
+      </div>
+      <p class="page-lede">
+        Reporting what broke is the most useful thing an alpha tester can do. Three fields are
+        required; everything else helps us reproduce the problem faster.
+      </p>
+
+      <div class="callout callout--warn">
+        <span class="callout-title">Please do not include</span>
+        <ul>
+          <li>Passwords, API keys, tokens or any account credential.</li>
+          <li>Private conversations with your players.</li>
+          <li>Text from licensed adventures or other paid material.</li>
+          <li>Plot spoilers your group has not reached.</li>
+        </ul>
+        <p>
+          This form accepts <strong>text only</strong>. Do not paste in a diagnostic bundle or a
+          campaign archive, and do not link to one. If we need a
+          <a href="/nerve/setup#support-bundle">support bundle</a>, we will ask you for it and
+          take it privately — review its contents yourself before sending it anywhere.
+        </p>
+      </div>
+
+      <!-- ============ OWNER INPUT REQUIRED — see /nerve/privacy ============ -->
+      <div class="owner-input" data-owner-input="feedback-destination">
+        <span class="callout-title">Not yet live — owner input required</span>
+        <p>
+          <strong>This form is built but not connected.</strong> The destination reports are
+          routed to, and the storage, access and retention practices described on the
+          <a href="/nerve/privacy">privacy page</a>, still need to be chosen and approved by the
+          product owner. Until that is done the endpoint is disabled and will return an error
+          rather than silently dropping a report.
+        </p>
+        <p>
+          In the meantime, email
+          <a href="mailto:backchannelstudios1@gmail.com?subject=Nerve%20alpha%20feedback">backchannelstudios1@gmail.com</a>
+          with the same information.
+        </p>
+      </div>
+
+      <form class="form" id="feedback-form" method="post" action="/api/feedback" novalidate>
+
+        <div class="form-status" id="form-status" role="status" aria-live="polite" tabindex="-1"></div>
+
+        <fieldset>
+          <legend>What kind of report is this?</legend>
+
+          <div class="field">
+            <fieldset style="border:0;padding:0;margin:0;background:none">
+              <legend class="visually-hidden">Category (required)</legend>
+              <span class="label" aria-hidden="true">Category <span class="req-mark">*</span></span>
+              <div class="radio-row">
+                <label class="radio-opt">
+                  <input type="radio" name="category" value="bug" required />
+                  <span>
+                    <span class="rl">Bug</span>
+                    <span class="rd">Something behaved incorrectly, errored, or did not do what it said it did.</span>
+                  </span>
+                </label>
+                <label class="radio-opt">
+                  <input type="radio" name="category" value="suggestion" />
+                  <span>
+                    <span class="rl">Suggestion</span>
+                    <span class="rd">An idea, a missing capability, or a rough edge worth smoothing.</span>
+                  </span>
+                </label>
+                <label class="radio-opt">
+                  <input type="radio" name="category" value="performance" />
+                  <span>
+                    <span class="rl">Performance observation</span>
+                    <span class="rd">Speed, latency, timeouts or rate limiting — what you measured, not what you suspect.</span>
+                  </span>
+                </label>
+              </div>
+              <p class="field-error" id="err-category">Choose one category.</p>
+            </fieldset>
+          </div>
+
+          <div class="field">
+            <label for="summary">Short summary <span class="req-mark">*</span></label>
+            <span class="hint" id="summary-hint">One line. What happened, in the words you would use to search for it later.</span>
+            <input type="text" id="summary" name="summary" maxlength="140" required
+                   aria-describedby="summary-hint err-summary" autocomplete="off" />
+            <p class="field-error" id="err-summary">Please add a one-line summary.</p>
+          </div>
+
+          <div class="field">
+            <label for="description">Description <span class="req-mark">*</span></label>
+            <span class="hint" id="description-hint">What you were doing, what you saw, and anything you already ruled out.</span>
+            <textarea id="description" name="description" maxlength="6000" required
+                      aria-describedby="description-hint err-description"></textarea>
+            <p class="field-error" id="err-description">Please describe what happened.</p>
+          </div>
+        </fieldset>
+
+        <fieldset id="bug-fields">
+          <legend>Bug details</legend>
+          <p class="hint" style="margin:-6px 0 22px">
+            Only needed for bug reports. <strong>"Unknown" is a fine answer</strong> — a report
+            with gaps is far better than no report.
+          </p>
+
+          <div class="two-col">
+            <div class="field">
+              <label for="nerveVersion">Nerve version</label>
+              <input type="text" id="nerveVersion" name="nerveVersion" maxlength="60"
+                     placeholder="0.67.1-alpha" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="fgVersion">Fantasy Grounds version</label>
+              <input type="text" id="fgVersion" name="fgVersion" maxlength="60"
+                     placeholder="unknown" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="ruleset">Ruleset</label>
+              <input type="text" id="ruleset" name="ruleset" maxlength="60"
+                     placeholder="5E" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="provider">AI provider</label>
+              <span class="hint" id="provider-hint">Whatever you selected in AI Setup.</span>
+              <input type="text" id="provider" name="provider" maxlength="60"
+                     aria-describedby="provider-hint" placeholder="unknown" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="errorCode">Exact error code</label>
+            <span class="hint" id="errorCode-hint">Copy it exactly, including any detail text underneath it — the detail often matters more than the code.</span>
+            <input type="text" id="errorCode" name="errorCode" maxlength="200"
+                   aria-describedby="errorCode-hint" placeholder="e.g. APP_LISTENER_PROTOCOL_FAILED" autocomplete="off" />
+          </div>
+
+          <div class="field">
+            <label for="steps">Steps to reproduce</label>
+            <span class="hint" id="steps-hint">Numbered, from a known starting point. If it only happened once, say so.</span>
+            <textarea id="steps" name="steps" maxlength="4000" aria-describedby="steps-hint"></textarea>
+          </div>
+
+          <div class="two-col">
+            <div class="field">
+              <label for="expected">Expected behaviour</label>
+              <textarea id="expected" name="expected" maxlength="2000" style="min-height:100px"></textarea>
+            </div>
+            <div class="field">
+              <label for="actual">Actual behaviour</label>
+              <textarea id="actual" name="actual" maxlength="2000" style="min-height:100px"></textarea>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Optional context</legend>
+          <p class="hint" style="margin:-6px 0 22px">
+            All optional. Useful for performance reports in particular.
+          </p>
+
+          <div class="two-col">
+            <div class="field">
+              <label for="modelTier">Model or account tier <span class="opt-mark">(optional)</span></label>
+              <span class="hint" id="modelTier-hint">Only if you actually observed it.</span>
+              <input type="text" id="modelTier" name="modelTier" maxlength="80"
+                     aria-describedby="modelTier-hint" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="elapsedSeconds">Response time in seconds <span class="opt-mark">(optional)</span></label>
+              <input type="number" id="elapsedSeconds" name="elapsedSeconds" min="0" max="100000" step="1" />
+            </div>
+            <div class="field">
+              <label for="playMode">Solo or multiplayer <span class="opt-mark">(optional)</span></label>
+              <select id="playMode" name="playMode">
+                <option value="">No answer</option>
+                <option value="solo">Solo</option>
+                <option value="multiplayer">Multiplayer</option>
+                <option value="unknown">Unknown</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="recordCheck">Did an approved action show up in the native record? <span class="opt-mark">(optional)</span></label>
+              <select id="recordCheck" name="recordCheck">
+                <option value="">No answer</option>
+                <option value="yes">Yes, the record changed</option>
+                <option value="no">No, the record was unchanged</option>
+                <option value="not-checked">I did not check</option>
+                <option value="n/a">Not applicable</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="otherExtensions">Other Fantasy Grounds extensions enabled <span class="opt-mark">(optional)</span></label>
+            <textarea id="otherExtensions" name="otherExtensions" maxlength="1500" style="min-height:90px"></textarea>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contact</legend>
+          <div class="field">
+            <label class="radio-opt" for="followUp" style="max-width:none">
+              <input type="checkbox" id="followUp" name="followUp" value="yes" />
+              <span>
+                <span class="rl">I would like a reply</span>
+                <span class="rd">Leave this unchecked to report anonymously. We cannot promise a response time either way.</span>
+              </span>
+            </label>
+          </div>
+          <div class="field">
+            <label for="email">Email address <span class="opt-mark">(only needed if you want a reply)</span></label>
+            <input type="email" id="email" name="email" maxlength="254"
+                   autocomplete="email" aria-describedby="err-email" />
+            <p class="field-error" id="err-email">Enter a valid email address, or uncheck "I would like a reply".</p>
+          </div>
+        </fieldset>
+
+        <!-- accessible spam prevention: honeypot + form-fill timing, no CAPTCHA -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="website">Leave this field empty</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+        <input type="hidden" name="formLoadedAt" id="formLoadedAt" value="" />
+
+        <div class="submit-row">
+          <button class="btn btn-primary" type="submit" id="submit-btn">Send report</button>
+          <span class="support-note" style="margin:0">
+            You will get a reference number as soon as the report is stored.
+          </span>
+        </div>
+      </form>
+
+      <hr class="rule" />
+
+      <h2 id="what-happens">What happens to your report</h2>
+      <ul>
+        <li>Reports are text only and are validated on the server before they are stored.</li>
+        <li>
+          You get a reference number the moment a report is actually stored. If storage fails you
+          get an error and your text stays in the form — we never show a success message for a
+          report that did not arrive.
+        </li>
+        <li>
+          The form is rate limited. There is no CAPTCHA and no puzzle to solve; spam protection
+          is a hidden field and a timing check that a real person never notices.
+        </li>
+        <li>
+          Where reports are stored, who can read them, and how long they are kept are described
+          on the <a href="/nerve/privacy">privacy page</a>. We are not going to invent a
+          retention period or a response-time promise we have not committed to.
+        </li>
+      </ul>
+
+      <p class="page-meta">
+        Fantasy Grounds and the Forge are operated by SmiteWorks, which has not endorsed or
+        certified this product.
+      </p>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
+      <nav aria-label="Footer">
+        <a href="/nerve/privacy">Privacy</a>
+        <a href="/nerve/terms">Terms</a>
+        <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/script.js"></script>
+  <script src="/assets/feedback.js"></script>
+</body>
+</html>
