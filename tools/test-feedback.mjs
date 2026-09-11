@@ -13,8 +13,11 @@
 
 import http from "node:http";
 import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
-const handler = require(new URL("../api/feedback.js", import.meta.url).pathname);
+/* fileURLToPath, not URL.pathname: on Windows the latter yields "/C:/Users/..."
+   with a leading slash, which require() cannot resolve. */
+const handler = require(fileURLToPath(new URL("../api/feedback.js", import.meta.url)));
 
 const server = http.createServer((req,res)=>handler(req,res));
 await new Promise(r=>server.listen(4199,r));
