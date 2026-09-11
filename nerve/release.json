@@ -24,44 +24,61 @@
     "non-clickable disabled control. Set a status back to 'pending' to unpublish;",
     "the pages round-trip byte-for-byte."
   ],
-
   "version": "0.67.1",
   "channel": "alpha",
   "releaseDate": "2026-09-11",
-
   "extensionVersion": "0.67.1",
   "nodeMinimum": "22",
   "platform": "Windows 10 / 11 (64-bit)",
-  "ruleset": "Fantasy Grounds Unity — 5E",
+  "ruleset": "Fantasy Grounds Unity \u2014 5E",
   "rulesetShort": "5E",
-
   "companion": {
     "status": "available",
     "path": "downloads/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip",
     "pendingLabel": "Companion download pending approval"
   },
-
   "forge": {
-    "status": "pending",
-    "url": "",
-    "itemName": "Nerve",
-    "pendingLabel": "Forge release pending"
+    "status": "available",
+    "url": "https://forge.fantasygrounds.com/shop/items/3596/view",
+    "itemName": "Nerve \u2014 AI-Assisted Play (Free Alpha)",
+    "pendingLabel": "Forge release pending",
+    "installVerified": false,
+    "_installVerified": [
+      "The listing is public and the extension is assigned to Live with Data installation,",
+      "but a signed-in acquisition plus a Fantasy Grounds updater installation has NOT been",
+      "run end to end yet. While this is false the site says so plainly and does not claim",
+      "Forge installation has been validated. Set it to true only once that test has actually",
+      "passed \u2014 it removes the caveat from the downloads and setup pages."
+    ]
   },
-
+  "community": {
+    "forumUrl": "https://www.fantasygrounds.com/forums/showthread.php?88108",
+    "_comment": [
+      "The public Fantasy Grounds thread for Nerve. Used for 'Discussion and bug reports'.",
+      "Anything posted there is public: the feedback page tells reporters to redact personal",
+      "information, credentials and private campaign material, and to keep support bundles",
+      "out of public posts. Email stays available for private reports."
+    ]
+  },
   "feedback": {
     "formEnabled": false,
     "_comment": [
       "Set formEnabled to true ONLY after RESEND_API_KEY, FEEDBACK_TO and FEEDBACK_FROM",
-      "are set in the Vercel project's environment variables. While it is false the",
-      "feedback page hides the form entirely and presents the email route instead, so no",
-      "tester fills in a long form only to be told the endpoint is off."
+      "are set in the Vercel project's environment variables, AND the privacy page has been",
+      "updated to say where form submissions are stored. While it is false the feedback page",
+      "hides the form entirely and offers the forum and email routes instead."
     ]
   },
-
   "support": {
-    "donateUrl": "https://buymeacoffee.com/backchannelstudios"
+    "url": "https://forge.fantasygrounds.com/shop/items/3596/view",
+    "label": "Support Nerve on Forge",
+    "_comment": [
+      "Nerve support goes through the Forge listing's own donation/gift options. Do not add a",
+      "direct donation endpoint here and do not imply that donating is required or unlocks",
+      "anything. Buy Me a Coffee was removed from the Forge listing by the owner and is no",
+      "longer used for Nerve; any studio-wide support page is a separate matter."
+    ]
   },
-
   "contact": {
     "studioEmail": "backchannelstudios1@gmail.com"
   }

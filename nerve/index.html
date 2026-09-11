@@ -83,14 +83,30 @@
 
         <!-- 2. PRIMARY AND SECONDARY ACTIONS -->
         <div class="actions">
-          <a class="btn btn-primary" href="/nerve/downloads">View release status →</a>
-          <a class="btn btn-secondary" href="/nerve/setup">Read the setup guide</a>
+          <a class="btn btn-primary" data-rel-link="forge" data-rel-variant="primary" href="https://forge.fantasygrounds.com/shop/items/3596/view" target="_blank" rel="noopener noreferrer">Get Nerve on Forge ↗</a>
+          <a class="btn btn-secondary" data-rel-link="companion" data-rel-variant="secondary" href="/downloads/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip" download="Nerve-Windows-Companion-0.67.1-alpha.zip" type="application/zip">Download Windows Companion (1.19 MB)</a>
         </div>
         <div class="actions actions-secondary">
-          <a class="btn btn-ghost" href="/nerve/feedback">Report feedback</a>
-          <a class="btn btn-ghost" data-rel-link="donate" href="https://buymeacoffee.com/backchannelstudios" target="_blank" rel="noopener noreferrer">Support development ↗</a>
+          <a class="btn btn-ghost" href="/nerve/setup">Setup guide</a>
+          <a class="btn btn-ghost" data-rel-link="forum" data-rel-variant="ghost" href="https://www.fantasygrounds.com/forums/showthread.php?88108" target="_blank" rel="noopener noreferrer">Discussion and bug reports ↗</a>
+          <a class="btn btn-ghost" data-rel-link="support" data-rel-variant="ghost" href="https://forge.fantasygrounds.com/shop/items/3596/view" target="_blank" rel="noopener noreferrer">Support Nerve on Forge ↗</a>
         </div>
-        <div class="callout callout--warn" style="margin-top:26px" data-rel-when="forge:not">
+        <div class="callout callout--accent" style="margin-top:26px" data-rel-when="forge">
+          <span class="callout-title">Available now</span>
+          <p>
+            Nerve is available on Fantasy Grounds Forge as a free alpha. Install the Forge
+            extension <strong>and</strong> the separate Windows companion to get started — you
+            need both, at matching versions.
+          </p>
+          <p data-rel-when="forgeInstallVerified:not">
+            The listing is public and free. We have <strong>not</strong> yet run an end-to-end
+            test of acquiring it while signed in and installing through the Fantasy Grounds
+            updater, so we are not claiming that path is proven. If it gives you trouble, the
+            <a data-rel-href="forum" href="https://www.fantasygrounds.com/forums/showthread.php?88108" target="_blank" rel="noopener noreferrer">forum thread ↗</a>
+            is the place to say so.
+          </p>
+        </div>
+        <div class="callout callout--warn" style="margin-top:26px" data-rel-when="forge:not" hidden>
           <span class="callout-title">Release preview — you cannot complete a setup yet</span>
           <p>
             The Windows companion is available to download now. <strong>The Fantasy Grounds
@@ -138,7 +154,7 @@
         <div class="req-card">
           <span class="req-idx">03 // Extension</span>
           <h3>The Nerve extension</h3>
-          <p>Installed through the Fantasy Grounds Forge. The extension on its own does not provide any AI service.</p>
+          <p>Installed through the Fantasy Grounds Forge, free. The extension on its own does not provide any AI service.</p>
         </div>
         <div class="req-card">
           <span class="req-idx">04 // Companion</span>
@@ -306,21 +322,28 @@
         </a>
         <a class="card-link" href="/nerve/feedback">
           <span class="k">Help us</span>
-          <h3>Report feedback</h3>
+          <h3>Report a problem</h3>
           <p>Bugs, suggestions and performance observations. The most useful thing you can send us.</p>
-          <span class="go">Open the feedback form →</span>
+          <span class="go">How to report →</span>
+        </a>
+        <a class="card-link" data-rel-href="forum" href="https://www.fantasygrounds.com/forums/showthread.php?88108" target="_blank" rel="noopener noreferrer">
+          <span class="k">Community</span>
+          <h3>Discussion and bug reports</h3>
+          <p>The public Fantasy Grounds thread for Nerve. Good for questions other testers can answer.</p>
+          <span class="go">Open the forum thread ↗</span>
         </a>
       </div>
 
       <div class="callout">
         <span class="callout-title">Support Nerve development</span>
         <p>
-          Free during alpha. Optional donations support development. Future stable releases or
-          additional products may be paid; pricing and availability will be announced separately.
-          No feature, download or support priority depends on donating.
+          Nerve is free during alpha. If you would like to support development, visit our Forge
+          listing for the available support options. Donations do not unlock features or priority
+          support. Future stable releases or additional products may be paid; pricing and
+          availability will be announced separately.
         </p>
         <p>
-          <a data-rel-link="donate" href="https://buymeacoffee.com/backchannelstudios" target="_blank" rel="noopener noreferrer">Buy us a coffee ↗</a>
+          <a data-rel-href="support" href="https://forge.fantasygrounds.com/shop/items/3596/view" target="_blank" rel="noopener noreferrer">Support Nerve on Forge ↗</a>
         </p>
       </div>
 
