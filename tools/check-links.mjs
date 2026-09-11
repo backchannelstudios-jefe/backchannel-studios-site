@@ -16,12 +16,13 @@
    Exits non-zero if anything fails, so it can gate a deploy.
    ============================================================ */
 
-import { readFile, readdir, access } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SKIP = new Set(["node_modules", ".git", ".vercel", "tools"]);
+const SKIP = new Set(["node_modules", ".git", ".vercel", "tools", "drafts"]);
 
 const failures = [];
 const warnings = [];
@@ -128,10 +129,15 @@ for (const page of pages) {
     }
   }
 
-  /* no clickable placeholder */
+  /* A download control may only be a real <a> when its target actually exists:
+     either an absolute https:// URL, or a root-relative path served from this repo. */
   for (const [, tag] of html.matchAll(/<a\s([^>]*data-rel-link="[^"]*"[^>]*)>/g)) {
     const href = /(?:^|\s)href="([^"]*)"/.exec(tag)?.[1] ?? "";
-    if (!/^https:\/\/\S+$/.test(href)) fail(page, `a download control renders as a clickable <a> with a non-https href: "${href}"`);
+    const isAbsolute = /^https:\/\/\S+$/.test(href);
+    const isLocal = href.startsWith("/") && resolves(decodeURIComponent(href));
+    if (!isAbsolute && !isLocal) {
+      fail(page, `a download control links to "${href}", which is neither an https:// URL nor a file in this repo`);
+    }
   }
   for (const [, tag] of html.matchAll(/<a\s([^>]*)>/g)) {
     const href = /(?:^|\s)href="([^"]*)"/.exec(tag)?.[1] ?? "";
@@ -161,6 +167,43 @@ if (fileSet.has("site.webmanifest")) {
   const man = JSON.parse(await readFile(join(ROOT, "site.webmanifest"), "utf8"));
   for (const icon of man.icons || []) {
     if (!resolves(icon.src)) fail("site.webmanifest", `icon ${icon.src} does not exist`);
+  }
+}
+
+/* ---------- the published checksum must match the published bytes ----------
+   This is the check that matters most on this site: a download whose advertised
+   digest does not match the served file is worse than no digest at all. */
+{
+  const rel = JSON.parse(await readFile(join(ROOT, "nerve", "release.json"), "utf8"));
+  if (rel.companion?.status === "available") {
+    const relPath = rel.companion.path || "";
+    if (!fileSet.has(relPath)) {
+      fail("nerve/release.json", `companion.path "${relPath}" is not a file in this repo`);
+    } else {
+      const bytes = await readFile(join(ROOT, relPath));
+      const digest = createHash("sha256").update(bytes).digest("hex");
+
+      const sidecarPath = relPath + ".sha256";
+      if (!fileSet.has(sidecarPath)) {
+        fail("nerve/release.json", `no .sha256 sidecar beside ${relPath} — run npm run build`);
+      } else {
+        const sidecar = (await readFile(join(ROOT, sidecarPath), "utf8")).trim().split(/\s+/)[0];
+        if (sidecar !== digest) {
+          fail(sidecarPath, `sidecar digest ${sidecar.slice(0, 16)}… does not match the file (${digest.slice(0, 16)}…)`);
+        }
+      }
+
+      const dl = await readFile(join(ROOT, "nerve/downloads/index.html"), "utf8");
+      const shown = /data-rel="companion\.sha256"[^>]*>([^<]*)</.exec(dl)?.[1]?.trim();
+      if (shown !== digest) {
+        fail("nerve/downloads/index.html", `the checksum shown to users (${shown}) does not match the actual file digest (${digest})`);
+      }
+
+      const size = /data-rel="companion\.sizeLabel"[^>]*>([^<]*)</.exec(dl)?.[1]?.trim();
+      if (!size || /pending/i.test(size)) {
+        fail("nerve/downloads/index.html", "the companion is published but no file size is shown");
+      }
+    }
   }
 }
 
