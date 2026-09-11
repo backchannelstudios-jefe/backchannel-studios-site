@@ -90,7 +90,7 @@
         <ul>
           <li>A Windows GM host — <span data-rel="platform">Windows 10 / 11 (64-bit)</span>. The companion runs on the machine hosting the campaign.</li>
           <li>Fantasy Grounds Unity running the <span data-rel="rulesetShort">5E</span> ruleset.</li>
-          <li>The Nerve extension, installed through the Forge. <strong>The extension on its own provides no AI service</strong>, and it has not been released yet — see <a href="/nerve/downloads">release status</a>.</li>
+          <li>The Nerve extension, installed through the Forge — free. <strong>The extension on its own provides no AI service.</strong></li>
           <li>The separate Nerve Windows companion.</li>
           <li>Node.js <span data-rel="nodeMinimum">22</span> or newer.</li>
           <li>A compatible external AI application and account. <strong>AI access, allowance and costs are not included with Nerve</strong> — your provider bills you, not us.</li>
@@ -129,12 +129,25 @@
             Current packaging targets Forge <strong>Data</strong> installation, not encrypted
             Vault delivery.
           </p>
-          <div class="callout callout--pending">
+          <div class="callout callout--pending" data-rel-when="forge:not" hidden>
             <span class="callout-title">Forge release pending</span>
             <p>
               The Forge item is not publicly available yet, so this step cannot be completed by
               new testers today. <a href="/nerve/downloads">Downloads</a> shows the current
               status.
+            </p>
+          </div>
+          <div class="actions" data-rel-when="forge">
+            <a class="btn btn-secondary" data-rel-link="forge" data-rel-variant="secondary" href="https://forge.fantasygrounds.com/shop/items/3596/view" target="_blank" rel="noopener noreferrer">Get Nerve on Forge ↗</a>
+          </div>
+          <div class="callout callout--warn" data-rel-when="forgeInstallVerified:not">
+            <span class="callout-title">Not yet proven end to end</span>
+            <p>
+              The listing is public and free, and the extension is assigned to Live with Data
+              installation. We have <strong>not</strong> yet tested acquiring it while signed in
+              and installing it through the Fantasy Grounds updater from a clean profile. If this
+              step misbehaves, that is worth reporting in the
+              <a data-rel-href="forum" href="https://www.fantasygrounds.com/forums/showthread.php?88108" target="_blank" rel="noopener noreferrer">forum thread ↗</a>.
             </p>
           </div>
         </li>
@@ -298,6 +311,16 @@
         If you have been running a developer preview build, do not install the packaged extension
         on top of it. Fantasy Grounds will find two copies and behave unpredictably.
       </p>
+      <div class="callout callout--warn">
+        <span class="callout-title">An old unpacked extension can mask the Forge one</span>
+        <p>
+          This is the failure worth knowing about: if a previously unpacked development copy is
+          still sitting in your <code>extensions</code> folder, Fantasy Grounds can load
+          <em>that</em> instead of the extension Forge installed. Everything looks installed, the
+          version you see is the old one, and nothing lines up with the companion. Move the old
+          folder out first — the steps below — rather than assuming the Forge install did not work.
+        </p>
+      </div>
       <ol class="steps">
         <li>
           <h3>Close Fantasy Grounds completely</h3>
@@ -378,7 +401,7 @@
             <tr>
               <th scope="row">Fantasy Grounds warns about duplicate extensions</th>
               <td>A developer-preview folder is still in <code>extensions</code>.</td>
-              <td>Follow <a href="#migration">migration</a>. Move the old folder out to a recoverable backup — do not delete campaign data.</td>
+              <td>Follow <a href="#migration">migration</a>. Move the old folder out to a recoverable backup — do not delete campaign data. An unpacked development copy can be loaded <em>instead of</em> the Forge-installed extension, which looks like the Forge install failing when it did not.</td>
             </tr>
             <tr>
               <th scope="row">Response is slow, or times out</th>
@@ -402,6 +425,19 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <h3 id="getting-help">Where to ask</h3>
+      <p>
+        The public Fantasy Grounds thread is the fastest route for anything another tester might
+        recognise, and it is where we post known issues. Redact personal information, credentials
+        and private campaign material before posting, and keep support bundles out of public posts.
+        For anything you would rather not put in the open, send a
+        <a href="/nerve/feedback">private report</a> instead.
+      </p>
+      <div class="actions">
+        <a class="btn btn-secondary" data-rel-link="forum" data-rel-variant="secondary" href="https://www.fantasygrounds.com/forums/showthread.php?88108" target="_blank" rel="noopener noreferrer">Discussion and bug reports ↗</a>
+        <a class="btn btn-ghost" href="/nerve/feedback">Send a private report</a>
       </div>
 
       <h3 id="support-bundle">Support bundles</h3>
