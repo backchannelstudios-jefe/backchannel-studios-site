@@ -114,56 +114,152 @@
 
       <hr class="rule" />
 
-      <!-- CURRENT RELEASE -->
-      <h2 id="current">Current release</h2>
+      <!-- ============================================================
+           WINDOWS COMPANION RELEASES
+           One card per entry in nerve/release.json. Which card is the match,
+           which is staged and which is the rollback archive is decided by
+           forgeExtensionVersion in that file — never edited here.
+           ============================================================ -->
 
-      <dl class="meta-list">
-        <div>
-          <dt>Version</dt>
-          <dd class="mono" data-rel="versionLabel">0.67.1 (alpha)</dd>
-        </div>
-        <div>
-          <dt>Matching extension</dt>
-          <dd class="mono" data-rel="extensionVersionLabel">0.67.1 (alpha)</dd>
-        </div>
-        <div>
-          <dt>Release date</dt>
-          <dd data-rel="releaseDateLabel">11 September 2026</dd>
-        </div>
-        <div>
-          <dt>Platform</dt>
-          <dd data-rel="platform">Windows 10 / 11 (64-bit)</dd>
-        </div>
-        <div>
-          <dt>File</dt>
-          <dd class="mono" data-rel="companion.filename">Nerve-Windows-Companion-0.67.1-alpha.zip</dd>
-        </div>
-        <div>
-          <dt>File size</dt>
-          <dd data-rel="companion.sizeLabel">1.19 MB</dd>
-        </div>
-      </dl>
-
-      <h3>Windows companion</h3>
-      <p>
-        <span class="status status--available" data-rel-status="companion">Available now</span>
-      </p>
-      <div class="actions">
-        <a class="btn btn-secondary" data-rel-link="companion" href="/downloads/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip" download="Nerve-Windows-Companion-0.67.1-alpha.zip" type="application/zip">Download Windows Companion (1.19 MB)</a>
+      <div class="callout callout--accent" id="version-match">
+        <span class="callout-title">Both halves must be the same version</span>
+        <p>
+          Nerve is an extension <em>and</em> a companion, and they must be the same version.
+          Open Fantasy Grounds and read the line it prints on load —
+          <code data-rel="fguAnnouncement">Nerve Adapter v0.67.1 loaded.</code> — then download
+          the companion that matches it.
+        </p>
+        <p data-rel-when="stagedRelease">
+          The Forge listing currently delivers extension
+          <strong data-rel="extensionVersion">0.67.1</strong>, so that is the companion to install
+          today. Version <strong data-rel="stagedVersion">0.68.7</strong> is published below ready
+          for the Forge update — install it only once Fantasy Grounds reports
+          <code>Nerve Adapter v<span data-rel="stagedVersion">0.68.7</span></code>.
+        </p>
+        <p data-rel-when="stagedRelease:not" hidden>
+          Both halves are on the same version right now. Download the companion below and install
+          the extension from the Forge.
+        </p>
       </div>
-      <p class="support-note" data-rel-note="companion" hidden>
-        The companion for release candidate <span data-rel="version">0.67.1</span> has not
-        been approved for public release yet, so there is deliberately no link here to click. When
-        it is published, this button becomes a real download and the SHA-256 checksum below is
-        filled in from the exact hosted file.
+
+      <h2 id="companion">Windows companion downloads</h2>
+      <p>
+        Every release keeps its own permanent address. We never replace the bytes at an address
+        that has already been published, so a checksum you noted last month still verifies, and
+        an older companion stays installable for as long as anyone is on the extension that
+        pairs with it.
       </p>
 
-      <h3>Checksum</h3>
+      <article class="release-card" data-rel-release="0.68.7">
+        <div class="release-head">
+          <h3 id="v0-68-7">Nerve <span data-rel-field="versionLabel">0.68.7 (alpha)</span></h3>
+          <span class="status status--staged" data-rel-field="statusLabel">Available for the upcoming Forge 0.68.7 update</span>
+        </div>
+
+        <p class="release-headline" data-rel-field="headline">A substantial alpha update focused on safer live play, lower accidental AI usage, clearer setup, and more reliable Fantasy Grounds event handling.</p>
+
+        <div class="callout callout--warn" data-rel-field-when="current:not">
+          <span class="callout-title">Check your adapter version first</span>
+          <p data-rel-field="warning">Do not install this companion until Fantasy Grounds reports Nerve Adapter v0.68.7.</p>
+        </div>
+
+        <dl class="meta-list meta-list--tight">
+          <div>
+            <dt>Release date</dt>
+            <dd data-rel-field="releaseDateLabel">15 September 2026</dd>
+          </div>
+          <div>
+            <dt>Pairs with extension</dt>
+            <dd class="mono" data-rel-field="adapterString">Nerve Adapter v0.68.7</dd>
+          </div>
+          <div>
+            <dt>File</dt>
+            <dd class="mono" data-rel-field="filename">Nerve-Windows-Companion-0.68.7-alpha.zip</dd>
+          </div>
+          <div>
+            <dt>File size</dt>
+            <dd data-rel-field="sizeLabel">1.23 MB</dd>
+          </div>
+        </dl>
+
+        <div class="actions">
+          <a class="btn btn-secondary btn-download" data-rel-field-href="url" data-rel-field-download="filename"
+             href="/downloads/nerve/0.68.7-alpha/Nerve-Windows-Companion-0.68.7-alpha.zip" download="Nerve-Windows-Companion-0.68.7-alpha.zip" type="application/zip"><span data-rel-field="downloadLabel">Download companion 0.68.7 (1.23 MB)</span></a>
+          <a class="btn btn-ghost" data-rel-field-href="checksumUrl" data-rel-field-download="checksumFilename"
+             href="/downloads/nerve/0.68.7-alpha/Nerve-Windows-Companion-0.68.7-alpha.zip.sha256" download="Nerve-Windows-Companion-0.68.7-alpha.zip.sha256">Checksum (.sha256)</a>
+        </div>
+
+        <p class="checksum-line">
+          <span class="checksum-label">SHA-256</span>
+          <code data-rel-field="sha256">613b3004edb419cc4813389df2b1d8c87adbee578dad9978fd3cffb52ac2baba</code>
+        </p>
+
+        <p class="improvements-title" data-rel-field="improvementsTitle">What improved in this release</p>
+        <ul class="tick-list" data-rel-field-list="improvements">
+            <li><strong>Manual Work Mode</strong> — Make native Fantasy Grounds bookkeeping changes without generating automatic AI cues. Deliberate Call Nerve requests stay available.</li>
+            <li><strong>Version safety</strong> — The extension and companion now require an exact version match, and say which of the two needs updating.</li>
+            <li><strong>Cleaner rolls</strong> — Table results and staged skill, ability-check and saving-throw messages settle into one follow-up instead of duplicate paid cues.</li>
+            <li><strong>Safer combat flow</strong> — Attack and result stages settle together; completed native damage does not repeat or end the player&#39;s turn; remaining effect work stays available; and a final defeat preserves wounds, effects and roster entries until an explicit end-turn.</li>
+            <li><strong>Better continuity</strong> — A confirmed current-room Story context can survive combat and a session resume without repinning.</li>
+            <li><strong>Safer recovery</strong> — Stale decisions are rejected without duplicate actions, and a claimed provider or listener failure is closed out cleanly rather than resubmitted as another possibly billed request.</li>
+            <li><strong>Clearer controls and installation</strong> — Session and AI controls are easier to read, and the custom-app configuration launcher is now installed correctly.</li>
+          </ul>
+      </article>
+
+      <article class="release-card" data-rel-release="0.67.1">
+        <div class="release-head">
+          <h3 id="v0-67-1">Nerve <span data-rel-field="versionLabel">0.67.1 (alpha)</span></h3>
+          <span class="status status--current" data-rel-field="statusLabel">Current Forge match</span>
+        </div>
+
+        <p class="release-headline" data-rel-field="headline">The first publicly published companion, paired with the 0.67.1 Forge extension.</p>
+
+        <div class="callout callout--warn" data-rel-field-when="current:not" hidden>
+          <span class="callout-title">Check your adapter version first</span>
+          <p data-rel-field="warning" hidden></p>
+        </div>
+
+        <dl class="meta-list meta-list--tight">
+          <div>
+            <dt>Release date</dt>
+            <dd data-rel-field="releaseDateLabel">11 September 2026</dd>
+          </div>
+          <div>
+            <dt>Pairs with extension</dt>
+            <dd class="mono" data-rel-field="adapterString">Nerve Adapter v0.67.1</dd>
+          </div>
+          <div>
+            <dt>File</dt>
+            <dd class="mono" data-rel-field="filename">Nerve-Windows-Companion-0.67.1-alpha.zip</dd>
+          </div>
+          <div>
+            <dt>File size</dt>
+            <dd data-rel-field="sizeLabel">1.19 MB</dd>
+          </div>
+        </dl>
+
+        <div class="actions">
+          <a class="btn btn-primary btn-download" data-rel-field-href="url" data-rel-field-download="filename"
+             href="/downloads/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip" download="Nerve-Windows-Companion-0.67.1-alpha.zip" type="application/zip"><span data-rel-field="downloadLabel">Download companion 0.67.1 (1.19 MB)</span></a>
+          <a class="btn btn-ghost" data-rel-field-href="checksumUrl" data-rel-field-download="checksumFilename"
+             href="/downloads/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip.sha256" download="Nerve-Windows-Companion-0.67.1-alpha.zip.sha256">Checksum (.sha256)</a>
+        </div>
+
+        <p class="checksum-line">
+          <span class="checksum-label">SHA-256</span>
+          <code data-rel-field="sha256">23de585dbe9bb0fc48ca37a7ecb9246fb1c252cae14b3f2df349f8edbe2f48f9</code>
+        </p>
+
+        <p class="improvements-title" data-rel-field="improvementsTitle" hidden></p>
+        <ul class="tick-list" data-rel-field-list="improvements" hidden></ul>
+      </article>
+
+      <h3 id="verify">Verifying what you downloaded</h3>
       <p>
-        Every published companion ZIP ships with a matching <code>.zip.sha256</code> file. The
-        digest is computed at build time from the exact bytes this site serves, so the published
-        checksum and the published file cannot disagree. Verify before extracting — in PowerShell,
-        compare the output of the first row against the second:
+        Every published ZIP ships with a matching <code>.zip.sha256</code> file. Each digest is
+        computed at build time from the exact bytes this site serves, so a published checksum and
+        its published file cannot disagree. Verify before extracting — compare the output of the
+        first row against the checksum on the card above:
       </p>
       <div class="table-wrap">
         <table class="data">
@@ -171,17 +267,14 @@
           <tbody>
             <tr>
               <th scope="row">PowerShell</th>
-              <td><code>Get-FileHash -Algorithm SHA256 .\<span data-rel="companion.filename">Nerve-Windows-Companion-0.67.1-alpha.zip</span></code></td>
+              <td><code>Get-FileHash -Algorithm SHA256 .\Nerve-Windows-Companion-&lt;version&gt;-alpha.zip</code></td>
             </tr>
             <tr>
-              <th scope="row">Expected value</th>
-              <td><code data-rel="companion.sha256">23de585dbe9bb0fc48ca37a7ecb9246fb1c252cae14b3f2df349f8edbe2f48f9</code></td>
+              <th scope="row">Compare against</th>
+              <td>the SHA-256 shown on that version's card, or the contents of its <code>.sha256</code> file.</td>
             </tr>
           </tbody>
         </table>
-      </div>
-      <div class="actions">
-        <a class="btn btn-secondary" data-rel-link="checksum" href="/downloads/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip.sha256" download="Nerve-Windows-Companion-0.67.1-alpha.zip.sha256">Download the .sha256 file</a>
       </div>
 
       <h3>Fantasy Grounds extension</h3>
@@ -256,15 +349,13 @@
         <a href="/nerve/releases">release notes</a> before updating one half without the other.
       </p>
 
-      <h2 id="previous">Previous releases</h2>
+      <h2 id="previous">Rolling back</h2>
       <p>
-        Approved releases stay available at their own permanent, versioned addresses so you can
-        roll back. We never replace the bytes at an address that has already been published — a
-        new build always gets a new address. Older releases carry a compatibility warning where
-        they need a different extension version.
-      </p>
-      <p>
-        There are no previously published public releases yet. Version history is tracked on the
+        Every release listed above keeps its own permanent, versioned address, so rolling back is
+        just installing the older companion and the extension version that pairs with it. We never
+        replace the bytes at an address that has already been published — a new build always gets
+        a new address — so a link or a checksum you saved months ago still resolves to the same
+        file. Per-release known issues and update instructions are on the
         <a href="/nerve/releases">releases page</a>.
       </p>
 
