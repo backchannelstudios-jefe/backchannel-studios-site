@@ -43,11 +43,12 @@
 
   "channel": "alpha",
 
-  "forgeExtensionVersion": "0.67.1",
+  "forgeExtensionVersion": "0.68.7",
   "_forgeExtensionVersion": [
     "The version the public Forge listing delivers TODAY — not the newest build we have.",
-    "Confirmed 15 September 2026: Forge is still on 0.67.1 while 0.68.7 is staged here.",
-    "Change it only when the Forge listing actually serves the new extension."
+    "15 September 2026: the Forge listing was updated to 0.68.7, so 0.68.7 is now the match",
+    "and 0.67.1 became the rollback archive. Change it only when the Forge listing actually",
+    "serves a new extension — never ahead of it."
   ],
 
   "releases": [
