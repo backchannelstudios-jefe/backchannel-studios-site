@@ -7,50 +7,68 @@
 
    Vercel runs this on every deploy via `npm run build`.
 
-   WHAT IT DERIVES FOR YOU (never type these by hand):
+   WHAT IT DERIVES FOR EACH RELEASE (never type these by hand):
 
-     • companion.sha256      hashed from the ZIP actually in the repo
-     • companion.bytes       its real byte length
-     • companion.sizeLabel   e.g. "1.19 MB"
-     • companion.url         from its path, so link and file agree
-     • companion.filename    from its path
-     • the .sha256 sidecar   written next to the ZIP
-     • versionLabel          "0.67.1 (alpha)"
-     • fguAnnouncement       "Nerve Adapter v0.67.1 loaded."
+     • sha256        hashed from the ZIP actually in the repo
+     • bytes         its real byte length
+     • sizeLabel     e.g. "1.23 MB"
+     • url           from its path, so link and file agree
+     • checksumUrl   the .sha256 beside it
+     • filename      from its path
+     • the .sha256 sidecar written next to the ZIP
+     • versionLabel  "0.68.7 (alpha)"
+     • match         "current" | "staged" | "previous"
+     • statusLabel   what the card's pill says
+     • warning       the compatibility line, or "" when none applies
 
-   Because the digest is taken from the same bytes Vercel serves,
-   the published checksum cannot disagree with the published file.
+   Because every digest is taken from the same bytes Vercel
+   serves, a published checksum cannot disagree with its file.
+
+   THE VERSION-MATCH RULE. Nerve's extension and companion must be
+   the same version. `forgeExtensionVersion` — the version the Forge
+   listing delivers right now — decides every card's wording:
+
+     version = forgeExtensionVersion  → the Forge match
+     version > forgeExtensionVersion  → staged, "don't install yet"
+     version < forgeExtensionVersion  → rollback archive, "don't mix"
+
+   Moving that one string on Forge release day relabels every card
+   and swaps every warning. No HTML is edited to ship a release.
 
    WHAT IT REWRITES IN THE HTML:
 
-     <tag data-rel="dotted.key">…</tag>
-         → the value, with a sensible fallback when still unknown
+     Site-wide:
+       <tag data-rel="dotted.key">…</tag>
+           → the value, with a sensible fallback when still unknown
+       <tag data-rel-link="companion|checksum|forge|forum|support">…</tag>
+           → REPLACED by a generated <a> when the target exists, else by
+             a non-clickable disabled control. A placeholder link is never
+             clickable. Contents are discarded, so use it only for buttons.
+             data-rel-variant="primary|secondary|ghost|bare" picks the look.
+       <a data-rel-href="companion|checksum|forge|forum|support">…</a>
+           → only the href is rewritten; contents are left as authored.
+       <span data-rel-status="companion|forge">…</span>   → status pill
+       <p   data-rel-note="companion|forge">…</p>         → hidden once live
+       <tag data-rel-when="<condition>[:not]">…</tag>
+           → `hidden` toggled by that condition. Conditions: companion,
+             forge, forum, feedbackForm, forgeInstallVerified,
+             stagedRelease, multipleReleases
 
-     <tag data-rel-link="companion|checksum|forge|forum|support">…</tag>
-         → REPLACED by a generated <a> when the target exists and is
-           approved; otherwise by a non-clickable disabled control. A
-           placeholder link is never rendered as clickable. The element's
-           own contents are discarded, so use this only for buttons.
-           Add data-rel-variant="primary|secondary|ghost" to choose how
-           the generated button looks.
+     Inside a release card — <article data-rel-release="0.68.7"> … </article>:
+       <tag data-rel-field="key">…</tag>       → that release's value.
+                                                 Empty value ⇒ element hidden.
+       <a   data-rel-field-href="key">         → href only
+       <a   data-rel-field-download="key">     → download attribute only
 
-     <a data-rel-href="companion|checksum|forge|forum|support">…</a>
-         → only the href is rewritten; the element and everything inside
-           it is left exactly as authored. Use this for cards and for
-           links that sit inside a sentence.
+     "companion" site-wide means THE RECOMMENDED RELEASE — the one that
+     pairs with the extension Forge serves today — so the hero button
+     always offers the download that actually works right now.
 
-     <span data-rel-status="companion|forge">…</span>   → status pill
-     <p   data-rel-note="companion|forge">…</p>         → hidden once live
-     <tag data-rel-when="<condition>[:not]">…</tag>
-         → `hidden` toggled on the whole element by that condition.
-           Conditions: companion, forge, forum, feedbackForm,
-           forgeInstallVerified
-
-   The committed HTML always carries the current values, so pages
-   are correct even if this never runs. Running it twice is a no-op.
+   The committed HTML always carries the current values, so pages are
+   correct even if this never runs. Running it twice is a no-op.
    ============================================================ */
 
-import { readFile, writeFile, readdir, stat } from "node:fs/promises";
+import { readFile, writeFile, readdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { join, dirname, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -66,73 +84,151 @@ const problems = [];
 const isHttps = (u) => typeof u === "string" && /^https:\/\/\S+$/.test(u);
 const fail = (m) => problems.push(m);
 
-if (!rel.version) fail("version is required");
 if (!rel.channel) fail("channel is required");
+if (!rel.forgeExtensionVersion) fail("forgeExtensionVersion is required — it decides what every release card says");
+if (!Array.isArray(rel.releases) || rel.releases.length === 0) fail("releases must be a non-empty array");
 
-/* ---------- resolve the companion artifact from disk ---------- */
+/* ---------- version comparison ----------
+   Plain dotted numbers. 0.68.7 vs 0.67.1 must not be compared as strings:
+   "0.68.7" < "0.7.0" lexically, which would silently mislabel every card. */
+function cmpVersion(a, b) {
+  const pa = String(a).split(".").map(Number);
+  const pb = String(b).split(".").map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const x = pa[i] || 0, y = pb[i] || 0;
+    if (x !== y) return x < y ? -1 : 1;
+  }
+  return 0;
+}
 
-let companion = { ...rel.companion };
+function humanSize(n) {
+  if (n < 1024) return `${n} bytes`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} KB`;
+  return `${(n / 1024 / 1024).toFixed(2)} MB`;
+}
 
-if (companion.status === "available") {
-  if (!companion.path) {
-    fail("companion.status is 'available' but companion.path is empty — point it at the ZIP in downloads/");
-  } else if (companion.path.includes("..") || companion.path.startsWith("/")) {
-    fail(`companion.path must be a repo-relative path, got "${companion.path}"`);
+function formatDate(iso) {
+  const [y, m, d] = String(iso).split("-").map(Number);
+  const months = ["January","February","March","April","May","June",
+                  "July","August","September","October","November","December"];
+  return `${d} ${months[m - 1]} ${y}`;
+}
+
+/* ---------- resolve every release from disk ---------- */
+
+const releases = [];
+const seen = new Set();
+
+for (const entry of rel.releases || []) {
+  const r = { ...entry };
+  const where = `releases["${r.version || "?"}"]`;
+
+  if (!r.version) { fail(`${where}: version is required`); continue; }
+  if (seen.has(r.version)) { fail(`${where}: listed twice`); continue; }
+  seen.add(r.version);
+  if (!/^\d+(\.\d+)*$/.test(r.version)) fail(`${where}: version must be dotted numbers, got "${r.version}"`);
+
+  if (r.status && !["pending", "available"].includes(r.status)) {
+    fail(`${where}: status must be "pending" or "available", got "${r.status}"`);
+  }
+
+  r.channel = r.channel || rel.channel;
+  r.versionLabel = `${r.version} (${r.channel})`;
+  r.releaseDateLabel = r.releaseDate ? formatDate(r.releaseDate) : "";
+  r.fguAnnouncement = `Nerve Adapter v${r.version} loaded.`;
+  r.adapterString = `Nerve Adapter v${r.version}`;
+  r.improvements = Array.isArray(r.improvements) ? r.improvements : [];
+  /* Empty for a release with nothing listed, so the heading hides with its list. */
+  r.improvementsTitle = r.improvements.length ? "What improved in this release" : "";
+
+  if (r.status === "available") {
+    if (!r.path) {
+      fail(`${where}: status is "available" but path is empty — point it at the ZIP in downloads/`);
+    } else if (r.path.includes("..") || r.path.startsWith("/")) {
+      fail(`${where}: path must be repo-relative, got "${r.path}"`);
+    } else {
+      let bytes;
+      const abs = join(ROOT, r.path);
+      try {
+        bytes = await readFile(abs);
+      } catch {
+        fail(`${where}: path points at a file that is not in the repo: ${r.path}`);
+      }
+
+      if (bytes) {
+        r.filename = basename(r.path);
+        r.bytes = bytes.length;
+        r.sizeLabel = humanSize(bytes.length);
+        r.sha256 = createHash("sha256").update(bytes).digest("hex");
+        r.url = "/" + r.path.split("/").map(encodeURIComponent).join("/");
+        r.checksumUrl = r.url + ".sha256";
+        r.checksumFilename = r.filename + ".sha256";
+        /* The version belongs in the label: with two downloads on the page, a button
+           that just says "Download Windows companion" is the mistake waiting to happen. */
+        r.downloadLabel = `Download companion ${r.version} (${r.sizeLabel})`;
+
+        /* Guard against the classic mistake: new ZIP, forgotten version bump. */
+        if (!r.filename.includes(r.version)) {
+          fail(`${where}: version does not appear in the filename "${r.filename}" — one of the two is stale`);
+        }
+        if (!r.releaseDate) fail(`${where}: status is "available" but releaseDate is empty`);
+
+        /* Write the sidecar in the standard `sha256sum` format. */
+        const sidecar = `${r.sha256}  ${r.filename}\n`;
+        const sidecarPath = abs + ".sha256";
+        /* Compare on content, not line endings: a CRLF checkout must not look
+           like a change, or every fresh clone on Windows reports a dirty file. */
+        const existing = await readFile(sidecarPath, "utf8").catch(() => null);
+        const same = existing !== null &&
+          existing.replace(/\r\n/g, "\n") === sidecar.replace(/\r\n/g, "\n");
+        if (!same) {
+          await writeFile(sidecarPath, sidecar, "utf8");
+          console.log("  wrote    " + relative(ROOT, sidecarPath));
+        }
+      }
+    }
+  }
+
+  releases.push(r);
+}
+
+/* Newest first, whatever order they were written in. */
+releases.sort((a, b) => cmpVersion(b.version, a.version));
+
+/* ---------- match each release against what Forge actually serves ---------- */
+
+const forgeVersion = rel.forgeExtensionVersion;
+const newest = releases[0];
+
+for (const r of releases) {
+  const c = cmpVersion(r.version, forgeVersion);
+  r.match = c === 0 ? "current" : c > 0 ? "staged" : "previous";
+
+  if (r.match === "current") {
+    /* Both true at once only when nothing newer is staged. */
+    r.statusLabel = r === newest ? "Current / recommended" : "Current Forge match";
+    r.warning = "";
+  } else if (r.match === "staged") {
+    r.statusLabel = `Available for the upcoming Forge ${r.version} update`;
+    r.warning = `Do not install this companion until Fantasy Grounds reports Nerve Adapter v${r.version}.`;
   } else {
-    const abs = join(ROOT, companion.path);
-    let bytes;
-    try {
-      bytes = await readFile(abs);
-    } catch {
-      fail(`companion.path points at a file that is not in the repo: ${companion.path}`);
-    }
-
-    if (bytes) {
-      companion.filename = basename(companion.path);
-      companion.bytes = bytes.length;
-      companion.sizeLabel = humanSize(bytes.length);
-      companion.sha256 = createHash("sha256").update(bytes).digest("hex");
-      companion.url = "/" + companion.path.split("/").map(encodeURIComponent).join("/");
-      companion.checksumUrl = companion.url + ".sha256";
-
-      /* Guard against the classic mistake: new ZIP, forgotten version bump. */
-      if (!companion.filename.includes(rel.version)) {
-        fail(
-          `version "${rel.version}" does not appear in the companion filename ` +
-          `"${companion.filename}" — one of the two is stale`
-        );
-      }
-      if (!rel.releaseDate) fail("companion.status is 'available' but releaseDate is empty");
-
-      /* Write the sidecar in the standard `sha256sum` format. */
-      const sidecar = `${companion.sha256}  ${companion.filename}\n`;
-      const sidecarPath = abs + ".sha256";
-      /* Compare on content, not line endings: a CRLF checkout must not look
-         like a change, or every fresh clone on Windows reports a dirty file. */
-      const existing = await readFile(sidecarPath, "utf8").catch(() => null);
-      const same = existing !== null &&
-        existing.replace(/\r\n/g, "\n") === sidecar.replace(/\r\n/g, "\n");
-      if (!same) {
-        await writeFile(sidecarPath, sidecar, "utf8");
-        console.log("  wrote    " + relative(ROOT, sidecarPath));
-      }
-    }
+    r.statusLabel = "Previous version / rollback archive";
+    r.warning = `Requires the matching ${r.version} Fantasy Grounds extension. Do not mix versions.`;
   }
 }
 
-if (rel.forge?.status === "available" && !isHttps(rel.forge.url)) {
-  fail("forge.status is 'available' but forge.url is not an https:// URL");
-}
-if (rel.community?.forumUrl && !isHttps(rel.community.forumUrl)) {
-  fail("community.forumUrl is set but is not an https:// URL");
-}
-if (rel.support?.url && !isHttps(rel.support.url)) {
-  fail("support.url is set but is not an https:// URL");
-}
-for (const [name, obj] of [["companion", rel.companion], ["forge", rel.forge]]) {
-  if (obj?.status && !["pending", "available"].includes(obj.status)) {
-    fail(`${name}.status must be "pending" or "available", got "${obj.status}"`);
-  }
+/* The download a visitor should actually take today is the one that pairs with
+   the extension they can actually install. If nothing in the list matches what
+   Forge serves, every visitor following the site would end up with a mismatched
+   pair — so that is a build failure, not a warning. It is also what stops anyone
+   deleting the old companion while the Forge listing still needs it. */
+const recommended = releases.find((r) => r.match === "current");
+if (!recommended && releases.length) {
+  fail(
+    `no listed release matches forgeExtensionVersion "${forgeVersion}" — ` +
+    `the Forge extension has no companion to pair with. Keep that release listed, ` +
+    `or correct forgeExtensionVersion.`
+  );
 }
 
 if (problems.length) {
@@ -143,32 +239,32 @@ if (problems.length) {
   process.exit(1);
 }
 
-function humanSize(n) {
-  if (n < 1024) return `${n} bytes`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} KB`;
-  return `${(n / 1024 / 1024).toFixed(2)} MB`;
-}
+const staged = releases.filter((r) => r.match === "staged");
 
-/* ---------- derived, human-facing labels ----------
+/* ---------- derived, site-wide values ----------
+   "companion" everywhere outside a release card means the recommended download.
    The runtime and the extension both report a bare "0.67.1"; "alpha" is the
-   release channel and the file-label suffix. Never tell a tester to expect
-   the channel suffix in what Fantasy Grounds prints. */
+   release channel and the file-label suffix. Never tell a tester to expect the
+   channel suffix in what Fantasy Grounds prints. */
+
+const companion = { ...recommended };
 
 const data = {
   ...rel,
   companion,
-  versionLabel: `${rel.version} (${rel.channel})`,
-  extensionVersionLabel: `${rel.extensionVersion || rel.version} (${rel.channel})`,
-  fguAnnouncement: `Nerve Adapter v${rel.extensionVersion || rel.version} loaded.`,
-  releaseDateLabel: rel.releaseDate ? formatDate(rel.releaseDate) : ""
+  releases,
+  version: recommended.version,
+  releaseDate: recommended.releaseDate,
+  extensionVersion: forgeVersion,
+  versionLabel: recommended.versionLabel,
+  extensionVersionLabel: `${forgeVersion} (${rel.channel})`,
+  fguAnnouncement: `Nerve Adapter v${forgeVersion} loaded.`,
+  releaseDateLabel: recommended.releaseDateLabel,
+  stagedVersion: staged[0]?.version || "",
+  stagedVersionLabel: staged[0]?.versionLabel || "",
+  stagedReleaseDateLabel: staged[0]?.releaseDateLabel || "",
+  newestVersion: newest.version
 };
-
-function formatDate(iso) {
-  const [y, m, d] = iso.split("-").map(Number);
-  const months = ["January","February","March","April","May","June",
-                  "July","August","September","October","November","December"];
-  return `${d} ${months[m - 1]} ${y}`;
-}
 
 /* ---------- value resolution ---------- */
 
@@ -204,7 +300,10 @@ const CONDITION = {
   forge: forgeReady,
   forum: forumReady,
   feedbackForm: feedbackFormReady,
-  forgeInstallVerified
+  forgeInstallVerified,
+  /* A newer companion is published here but Forge has not caught up yet. */
+  stagedRelease: staged.length > 0,
+  multipleReleases: releases.length > 1
 };
 
 /* ---------- link rendering ---------- */
@@ -221,12 +320,12 @@ const classFor = (v) =>
   v === "primary" ? 'class="btn btn-primary" ' : 'class="btn btn-secondary" ';
 
 function renderLink(kind, attrs) {
-  const disabled = (label) =>
-    `<span class="btn-disabled" data-rel-link="${kind}"${variantAttr(attrs)}>${escapeHtml(label)}</span>`;
   const variantAttr = (a) => {
     const m = /\sdata-rel-variant="[^"]*"/.exec(a || "");
     return m ? m[0] : "";
   };
+  const disabled = (label) =>
+    `<span class="btn-disabled" data-rel-link="${kind}"${variantAttr(attrs)}>${escapeHtml(label)}</span>`;
   const v = (fallback) => classFor(variantOf(attrs, fallback));
 
   switch (kind) {
@@ -235,7 +334,7 @@ function renderLink(kind, attrs) {
       return (
         `<a ${v("secondary")}data-rel-link="companion"${variantAttr(attrs)} href="${escapeHtml(companion.url)}" ` +
         `download="${escapeHtml(companion.filename)}" type="application/zip">` +
-        `Download Windows Companion (${escapeHtml(companion.sizeLabel)})</a>`
+        `Download Windows Companion ${escapeHtml(companion.version)} (${escapeHtml(companion.sizeLabel)})</a>`
       );
 
     case "checksum":
@@ -295,12 +394,116 @@ const HREF = {
 };
 const RE_STATUS = /<span([^>]*\sdata-rel-status="(companion|forge)"[^>]*)>([\s\S]*?)<\/span>/g;
 const RE_NOTE = /<p([^>]*\sdata-rel-note="(companion|forge)"[^>]*)>/g;
-const RE_WHEN = /<([a-z]+)([^>]*\sdata-rel-when="(companion|forge|forum|feedbackForm|forgeInstallVerified)(:not)?"[^>]*)>/g;
+const CONDITION_NAMES = Object.keys(CONDITION).join("|");
+const RE_WHEN = new RegExp(`<([a-z]+)([^>]*\\sdata-rel-when="(${CONDITION_NAMES})(:not)?"[^>]*)>`, "g");
 
 const stripHidden = (attrs) => attrs.replace(/\shidden(="[^"]*")?(?=\s|$)/g, "");
 
+/* ---------- release cards ----------
+   <article data-rel-release="0.68.7"> … </article> is filled from that release
+   alone, so the two cards cannot pick up each other's checksum. Fields left with
+   no value are hidden rather than emptied, which is how a card with no
+   compatibility warning loses its warning line instead of showing a blank box. */
+
+const RE_CARD_OPEN = /<([a-z]+)([^>]*\sdata-rel-release="([^"]+)"[^>]*)>/;
+
+/* Find the end of the element opened at `openIdx`, counting nested same-name tags. */
+function closeIndex(html, tag, afterOpen) {
+  const re = new RegExp(`</?${tag}\\b`, "gi");
+  re.lastIndex = afterOpen;
+  let depth = 1, m;
+  while ((m = re.exec(html))) {
+    depth += m[0][1] === "/" ? -1 : 1;
+    if (depth === 0) return m.index;
+  }
+  return html.length;
+}
+
+function fillCard(inner, r) {
+  let out = inner;
+
+  out = out.replace(/<([a-z]+)([^>]*\sdata-rel-field="([a-zA-Z0-9._-]+)"[^>]*)>([\s\S]*?)<\/\1>/g,
+    (_w, tag, attrs, key) => {
+      const raw = dig(r, key);
+      const value = raw === undefined || raw === null ? "" : String(raw);
+      let a = stripHidden(attrs);
+      /* Keep a status pill's colour in step with the state it is announcing, so a
+         staged release can never be shown wearing the green "available" dot. */
+      a = a.replace(/\sclass="([^"]*)"/, (whole, cls) =>
+        /\bstatus--/.test(cls)
+          ? ` class="${cls.replace(/\bstatus--[a-z]+\b/g, `status--${r.match}`)}"`
+          : whole);
+      /* An empty field is a field that does not apply to this release. */
+      return value === ""
+        ? `<${tag}${a} hidden></${tag}>`
+        : `<${tag}${a}>${escapeHtml(value)}</${tag}>`;
+    });
+
+  /* The improvement list is written once, in release.json, and rendered here —
+     so a card cannot drift from the release notes it is summarising. */
+  out = out.replace(/<([a-z]+)([^>]*\sdata-rel-field-list="([a-zA-Z0-9._-]+)"[^>]*)>([\s\S]*?)<\/\1>/g,
+    (_w, tag, attrs, key) => {
+      const items = dig(r, key);
+      const a = stripHidden(attrs);
+      if (!Array.isArray(items) || items.length === 0) return `<${tag}${a} hidden></${tag}>`;
+      const lis = items.map((item) => {
+        const [term, text] = Array.isArray(item) ? item : ["", item];
+        return term
+          ? `\n            <li><strong>${escapeHtml(term)}</strong> — ${escapeHtml(text)}</li>`
+          : `\n            <li>${escapeHtml(text)}</li>`;
+      }).join("");
+      return `<${tag}${a}>${lis}\n          </${tag}>`;
+    });
+
+  out = out.replace(/<a([^>]*\sdata-rel-field-href="([a-zA-Z0-9._-]+)"[^>]*)>/g, (whole, attrs, key) => {
+    const url = dig(r, key);
+    if (!url) return whole;
+    let a = attrs.replace(/\shref="[^"]*"/, ` href="${escapeHtml(url)}"`);
+    /* The download that actually pairs with the installed extension is the one the
+       eye should land on. With a staged build sitting above it on the page, leading
+       with the wrong button is how someone ends up with a mismatched pair. */
+    a = a.replace(/\sclass="([^"]*\bbtn-download\b[^"]*)"/, (_w, cls) =>
+      ` class="${cls.replace(/\bbtn-(primary|secondary)\b/g, r.match === "current" ? "btn-primary" : "btn-secondary")}"`);
+    return `<a${a}>`;
+  });
+
+  out = out.replace(/<a([^>]*\sdata-rel-field-download="([a-zA-Z0-9._-]+)"[^>]*)>/g, (whole, attrs, key) => {
+    const name = dig(r, key);
+    if (!name) return whole;
+    return `<a${attrs.replace(/\sdownload="[^"]*"/, ` download="${escapeHtml(name)}"`)}>`;
+  });
+
+  /* Blocks that belong to one match state only: staged / previous / current. */
+  out = out.replace(/<([a-z]+)([^>]*\sdata-rel-field-when="(current|staged|previous)(:not)?"[^>]*)>/g,
+    (_w, tag, attrs, want, negated) => {
+      const show = negated ? r.match !== want : r.match === want;
+      return `<${tag}${stripHidden(attrs)}${show ? "" : " hidden"}>`;
+    });
+
+  return out;
+}
+
+function rewriteCards(html) {
+  let out = "", rest = html;
+  for (;;) {
+    const m = RE_CARD_OPEN.exec(rest);
+    if (!m) break;
+    const [open, tag, , version] = m;
+    const openEnd = m.index + open.length;
+    const end = closeIndex(rest, tag, openEnd);
+    const r = releases.find((x) => x.version === version);
+    const inner = rest.slice(openEnd, end);
+    out += rest.slice(0, openEnd) + (r ? fillCard(inner, r) : inner);
+    rest = rest.slice(end);
+  }
+  return out + rest;
+}
+
 function rewrite(html) {
   let out = html;
+
+  /* Cards first: their fields must not be touched by the site-wide rules. */
+  out = rewriteCards(out);
 
   out = out.replace(RE_LINK, (_whole, _tag, attrs, kind) => renderLink(kind, attrs));
 
@@ -357,13 +560,20 @@ for await (const file of htmlFiles(ROOT)) {
   }
 }
 
+const pad = (s) => String(s).padEnd(18);
 console.log(
-  `\n  Nerve ${data.versionLabel} — ${scanned} page(s) scanned, ${changed} rewritten.\n` +
-  `  companion:     ${companionReady ? `PUBLISHED  ${companion.filename}  ${companion.sizeLabel}` : "pending (no clickable link rendered)"}\n` +
-  (companionReady ? `  sha256:        ${companion.sha256}\n` : "") +
-  `  forge:         ${forgeReady ? "PUBLISHED  " + rel.forge.url : "pending (no clickable link rendered)"}\n` +
-  `  forge install: ${forgeInstallVerified ? "verified" : "NOT yet tested end to end — site says so"}\n` +
-  `  forum:         ${forumReady ? rel.community.forumUrl : "not set"}\n` +
-  `  support:       ${isHttps(rel.support?.url) ? rel.support.url : "not set"}\n` +
-  `  feedback form: ${feedbackFormReady ? "enabled" : "hidden (email route shown instead)"}\n`
+  `\n  Nerve — ${scanned} page(s) scanned, ${changed} rewritten.\n` +
+  `  ${pad("forge extension:")}${forgeVersion}  (what the listing delivers today)\n` +
+  `  ${pad("recommended:")}${recommended.versionLabel}\n` +
+  releases.map((r) =>
+    `    ${r.version.padEnd(8)} ${r.match.padEnd(9)} ` +
+    (r.status === "available"
+      ? `${r.sizeLabel.padStart(8)}  ${r.sha256.slice(0, 16)}…  ${r.statusLabel}`
+      : `pending (no clickable link rendered)`)
+  ).join("\n") + "\n" +
+  `  ${pad("forge:")}${forgeReady ? "PUBLISHED  " + rel.forge.url : "pending (no clickable link rendered)"}\n` +
+  `  ${pad("forge install:")}${forgeInstallVerified ? "verified" : "NOT yet tested end to end — site says so"}\n` +
+  `  ${pad("forum:")}${forumReady ? rel.community.forumUrl : "not set"}\n` +
+  `  ${pad("support:")}${isHttps(rel.support?.url) ? rel.support.url : "not set"}\n` +
+  `  ${pad("feedback form:")}${feedbackFormReady ? "enabled" : "hidden (email route shown instead)"}\n`
 );

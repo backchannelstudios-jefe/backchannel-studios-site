@@ -52,7 +52,16 @@ const FORBIDDEN = [
   [/(explicit|express|written)\s+permission\s+(from|of)\s+smiteworks/i,
    "claims explicit permission from SmiteWorks"],
   [/donation\s+is\s+required|must\s+donate|required\s+to\s+donate/i,
-   "implies donating is required"]
+   "implies donating is required"],
+  /* The changes cut duplicate and bookkeeping cues, but what that saves depends on
+     provider, model, play style and retries. A number here would be invented. */
+  [/sav(es|ing|e)\s+(you\s+)?(up\s+to\s+)?\d+\s*%/i, "claims a measured percentage saving"],
+  [/\d+\s*%\s+(less|lower|cheaper|reduction|savings?)\b/i, "claims a measured percentage saving"],
+  [/sav(es|ing|e)\s+(you\s+)?\$\s*\d/i, "claims a measured dollar saving"],
+  [/cuts?\s+(your\s+)?(ai\s+)?(costs?|spend|bills?)\s+(by|in)\b/i, "quantifies an AI cost reduction"],
+  /* Forge distributes the extension. Publishing the .ext or the submission bundle
+     here would put files on the site that are not ours to hand out. */
+  [/download\s+the\s+\.ext\b/i, "offers the Forge extension file as a download"]
 ];
 
 /* Exact external destinations. A typo here is a link into someone else's product. */
@@ -171,6 +180,19 @@ for (const page of pages) {
     }
   }
 
+  /* The extension is distributed through the Forge, and the Forge-submission bundle
+     is internal. Neither may be downloadable from this site — at any URL, however
+     the link is labelled. */
+  for (const ref of refs) {
+    const target = decodeURIComponent(ref.split("#")[0].split("?")[0]);
+    if (/\.ext$/i.test(target)) {
+      fail(page, `links to a Fantasy Grounds extension file "${ref}" — the extension comes from the Forge, not from here`);
+    }
+    if (/submission|forge-bundle|owner-handoff/i.test(target) && /\.(zip|7z|rar)$/i.test(target)) {
+      fail(page, `links to what looks like an internal submission bundle: "${ref}"`);
+    }
+  }
+
   /* Every generated external control must land on exactly the right item/thread,
      whether the build replaced the whole element (data-rel-link) or only its href
      (data-rel-href). A control still rendered as a disabled <span> is not checked
@@ -208,39 +230,144 @@ if (fileSet.has("site.webmanifest")) {
   }
 }
 
-/* ---------- the published checksum must match the published bytes ----------
+/* ---------- every published checksum must match its published bytes ----------
    This is the check that matters most on this site: a download whose advertised
-   digest does not match the served file is worse than no digest at all. */
+   digest does not match the served file is worse than no digest at all. With
+   more than one release on the page, it also has to prove each card shows ITS
+   OWN digest — two cards quietly sharing one checksum would verify against the
+   wrong file and look perfectly fine. */
 {
   const rel = JSON.parse(await readFile(join(ROOT, "nerve", "release.json"), "utf8"));
-  if (rel.companion?.status === "available") {
-    const relPath = rel.companion.path || "";
-    if (!fileSet.has(relPath)) {
-      fail("nerve/release.json", `companion.path "${relPath}" is not a file in this repo`);
-    } else {
-      const bytes = await readFile(join(ROOT, relPath));
-      const digest = createHash("sha256").update(bytes).digest("hex");
+  const dl = await readFile(join(ROOT, "nerve/downloads/index.html"), "utf8");
 
-      const sidecarPath = relPath + ".sha256";
-      if (!fileSet.has(sidecarPath)) {
-        fail("nerve/release.json", `no .sha256 sidecar beside ${relPath} — run npm run build`);
+  /* Pull each release card out of the downloads page by version. */
+  function cardFor(version) {
+    const open = new RegExp(`<([a-z]+)([^>]*\\sdata-rel-release="${version.replace(/\./g, "\\.")}"[^>]*)>`);
+    const m = open.exec(dl);
+    if (!m) return null;
+    const tag = m[1];
+    const re = new RegExp(`</?${tag}\\b`, "gi");
+    re.lastIndex = m.index + m[0].length;
+    let depth = 1, hit;
+    while ((hit = re.exec(dl))) {
+      depth += hit[0][1] === "/" ? -1 : 1;
+      if (depth === 0) return dl.slice(m.index + m[0].length, hit.index);
+    }
+    return null;
+  }
+
+  const digests = new Map();
+
+  for (const entry of rel.releases || []) {
+    if (entry.status !== "available") continue;
+    const where = `release ${entry.version}`;
+    const relPath = entry.path || "";
+
+    if (!fileSet.has(relPath)) {
+      fail("nerve/release.json", `${where}: path "${relPath}" is not a file in this repo`);
+      continue;
+    }
+
+    const bytes = await readFile(join(ROOT, relPath));
+    const digest = createHash("sha256").update(bytes).digest("hex");
+
+    /* Two releases hashing the same is the sign that a ZIP was copied, not rebuilt. */
+    if (digests.has(digest)) {
+      fail("nerve/release.json",
+        `${where} and release ${digests.get(digest)} are byte-identical — one of them is the wrong file`);
+    }
+    digests.set(digest, entry.version);
+
+    const sidecarPath = relPath + ".sha256";
+    if (!fileSet.has(sidecarPath)) {
+      fail("nerve/release.json", `${where}: no .sha256 sidecar beside ${relPath} — run npm run build`);
+    } else {
+      const sidecar = (await readFile(join(ROOT, sidecarPath), "utf8")).trim().split(/\s+/)[0];
+      if (sidecar !== digest) {
+        fail(sidecarPath, `sidecar digest ${sidecar.slice(0, 16)}… does not match the file (${digest.slice(0, 16)}…)`);
+      }
+    }
+
+    const card = cardFor(entry.version);
+    if (!card) {
+      fail("nerve/downloads/index.html", `${where} is published but has no card on the downloads page`);
+      continue;
+    }
+
+    const shown = /data-rel-field="sha256"[^>]*>([^<]*)</.exec(card)?.[1]?.trim();
+    if (shown !== digest) {
+      fail("nerve/downloads/index.html",
+        `${where}: the checksum on the card (${shown}) does not match the actual file digest (${digest})`);
+    }
+
+    const size = /data-rel-field="sizeLabel"[^>]*>([^<]*)</.exec(card)?.[1]?.trim();
+    if (!size || /pending/i.test(size)) {
+      fail("nerve/downloads/index.html", `${where} is published but its card shows no file size`);
+    }
+
+    /* The download button must point at this release's own file. */
+    const href = /<a[^>]*\sdata-rel-field-href="url"[^>]*>/.exec(card)?.[0] ?? "";
+    const url = /(?:^|\s)href="([^"]*)"/.exec(href)?.[1] ?? "";
+    if (decodeURIComponent(url) !== "/" + relPath) {
+      fail("nerve/downloads/index.html",
+        `${where}: the download button points at "${url}", not at its own file "/${relPath}"`);
+    }
+  }
+
+  /* ---------- the version-match rule, as the page actually states it ----------
+     Extension and companion must be the same version, so exactly one card may be
+     the current match, anything newer must warn testers off, and anything older
+     must warn against mixing. A staged build presented without its warning is the
+     specific failure that would have people installing a companion their extension
+     cannot pair with. */
+  const forgeVersion = rel.forgeExtensionVersion;
+  if (!forgeVersion) {
+    fail("nerve/release.json", "forgeExtensionVersion is missing — nothing decides which release is the Forge match");
+  } else {
+    const cmp = (a, b) => {
+      const pa = String(a).split(".").map(Number), pb = String(b).split(".").map(Number);
+      for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+        const x = pa[i] || 0, y = pb[i] || 0;
+        if (x !== y) return x < y ? -1 : 1;
+      }
+      return 0;
+    };
+
+    let currents = 0;
+    for (const entry of rel.releases || []) {
+      if (entry.status !== "available") continue;
+      const card = cardFor(entry.version);
+      if (!card) continue;
+      const c = cmp(entry.version, forgeVersion);
+      const status = /data-rel-field="statusLabel"[^>]*>([^<]*)</.exec(card)?.[1]?.trim() ?? "";
+      const warning = /data-rel-field="warning"[^>]*>([^<]*)</.exec(card)?.[1]?.trim() ?? "";
+      const where = `release ${entry.version}`;
+
+      if (c === 0) {
+        currents++;
+        if (warning) fail("nerve/downloads/index.html", `${where} is the Forge match but its card still carries a warning: "${warning}"`);
+      } else if (c > 0) {
+        if (!/do not install/i.test(warning)) {
+          fail("nerve/downloads/index.html",
+            `${where} is newer than the Forge extension (${forgeVersion}) but its card does not tell people to wait`);
+        }
+        if (/recommended/i.test(status)) {
+          fail("nerve/downloads/index.html", `${where} cannot be "${status}" while Forge still serves ${forgeVersion}`);
+        }
       } else {
-        const sidecar = (await readFile(join(ROOT, sidecarPath), "utf8")).trim().split(/\s+/)[0];
-        if (sidecar !== digest) {
-          fail(sidecarPath, `sidecar digest ${sidecar.slice(0, 16)}… does not match the file (${digest.slice(0, 16)}…)`);
+        if (!/do not mix/i.test(warning)) {
+          fail("nerve/downloads/index.html",
+            `${where} is older than the Forge extension (${forgeVersion}) but its card does not warn against mixing versions`);
+        }
+        if (/recommended|current/i.test(status)) {
+          fail("nerve/downloads/index.html", `${where} is superseded but its card says "${status}"`);
         }
       }
+    }
 
-      const dl = await readFile(join(ROOT, "nerve/downloads/index.html"), "utf8");
-      const shown = /data-rel="companion\.sha256"[^>]*>([^<]*)</.exec(dl)?.[1]?.trim();
-      if (shown !== digest) {
-        fail("nerve/downloads/index.html", `the checksum shown to users (${shown}) does not match the actual file digest (${digest})`);
-      }
-
-      const size = /data-rel="companion\.sizeLabel"[^>]*>([^<]*)</.exec(dl)?.[1]?.trim();
-      if (!size || /pending/i.test(size)) {
-        fail("nerve/downloads/index.html", "the companion is published but no file size is shown");
-      }
+    if (currents !== 1) {
+      fail("nerve/release.json",
+        `exactly one published release must match forgeExtensionVersion "${forgeVersion}", found ${currents}`);
     }
   }
 }
