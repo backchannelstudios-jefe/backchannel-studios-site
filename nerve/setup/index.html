@@ -157,8 +157,32 @@
           <p>
             Install Node.js <span data-rel="nodeMinimum">22</span> or newer if you do not have it.
             Then download the companion ZIP that matches your extension version from
-            <a href="/nerve/downloads">Downloads</a>, verify its SHA-256 checksum, and
+            <a href="/nerve/downloads#companion">Downloads</a>, verify its SHA-256 checksum, and
             <strong>extract the ZIP completely</strong> before running anything.
+          </p>
+          <div class="callout callout--accent">
+            <span class="callout-title">Match the version, do not assume the newest</span>
+            <p>
+              The extension and the companion must be the <strong>same version</strong>. When
+              Fantasy Grounds loaded in step 2 it printed a line like
+              <code data-rel="fguAnnouncement">Nerve Adapter v0.67.1 loaded.</code> — download the
+              companion carrying that version, even if a newer one is published.
+            </p>
+            <p data-rel-when="stagedRelease">
+              Right now Forge delivers <strong data-rel="extensionVersion">0.67.1</strong>, so
+              that is the companion to install. Version
+              <strong data-rel="stagedVersion">0.68.7</strong> is on the downloads page waiting
+              for the Forge update; installing it today would leave you with a pair that cannot
+              talk to each other.
+            </p>
+            <p data-rel-when="stagedRelease:not" hidden>
+              Both halves are on the same version at the moment, so the newest companion on the
+              downloads page is the right one.
+            </p>
+          </div>
+          <p>
+            Both 0.68.7 components notice a mismatch themselves and tell you which half to
+            update, but it is quicker to get the pair right the first time.
           </p>
           <div class="callout callout--warn">
             <span class="callout-title">Extract, do not browse</span>
