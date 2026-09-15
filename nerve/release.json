@@ -1,46 +1,86 @@
 {
   "_howToPublishANewCompanionBuild": [
-    "THIS FILE IS THE ONLY PLACE YOU EDIT. Three steps, no hand-computed hashes:",
+    "THIS FILE IS THE ONLY PLACE YOU EDIT. No hand-computed hashes, no HTML edits.",
     "",
     "  1. Upload the new ZIP to  downloads/nerve/<version>-<channel>/  on GitHub.",
     "     Use a NEW folder every time. Never replace a file at a path already published.",
-    "  2. In this file, set: version, channel, releaseDate, and companion.path.",
-    "  3. Commit. That's it.",
+    "  2. Add an entry at the TOP of `releases` below: version, releaseDate, path,",
+    "     status, and the 'improvements' lines you want shown on its card.",
+    "  3. Leave the older entries alone. They stay downloadable so anyone still on the",
+    "     matching extension can reinstall, and so old links keep working.",
+    "  4. Commit.",
     "",
-    "On every deploy `npm run build` reads the actual ZIP and fills in the rest itself:",
-    "the SHA-256, the exact byte size, the human-readable size, the download URL and the",
-    "filename, then writes the matching .sha256 sidecar next to the ZIP. Because the hash",
-    "is computed from the very bytes being served, the published checksum can never drift",
-    "from the published file.",
+    "On every deploy `npm run build` reads each ZIP and fills in the rest itself: the",
+    "SHA-256, the exact byte size, the human-readable size, the download URL, the",
+    "checksum URL and the filename, then writes the matching .sha256 sidecar next to",
+    "each ZIP. Because every hash is computed from the very bytes being served, a",
+    "published checksum can never drift from its published file.",
     "",
-    "The build REFUSES to publish and fails loudly if: the ZIP named in companion.path is",
-    "missing, the version string does not appear in the filename, or a status is set to",
-    "'available' without the things that status requires. A failed build leaves the",
-    "previous deployment serving, so a mistake here cannot break the live site.",
+    "THE ONE FIELD THAT MOVES ON RELEASE DAY is `forgeExtensionVersion`. Nerve's",
+    "extension and companion must be the SAME version, so that field — the version the",
+    "Forge listing actually delivers right now — decides what every card says:",
+    "",
+    "  version  = forgeExtensionVersion  ->  the Forge match. No warning.",
+    "  version  > forgeExtensionVersion  ->  staged. Card says not to install it yet.",
+    "  version  < forgeExtensionVersion  ->  rollback archive. Card says do not mix.",
+    "",
+    "So while Forge still serves 0.67.1, that card reads 'Current Forge match' and the",
+    "0.68.7 card warns testers off. The moment Forge actually delivers 0.68.7, change",
+    "this one string and both cards relabel themselves and swap warnings. Do NOT move",
+    "it ahead of the Forge listing to make the site look current — the whole point is",
+    "that nobody installs a companion the extension cannot pair with.",
     "",
     "status values: 'pending' | 'available'.",
-    "A download or Forge link is rendered as a real, clickable control ONLY when its",
-    "status is 'available' and its target actually exists. Otherwise it renders as a",
-    "non-clickable disabled control. Set a status back to 'pending' to unpublish;",
-    "the pages round-trip byte-for-byte."
+    "A download is rendered as a real, clickable control ONLY when its status is",
+    "'available' and its file actually exists. Otherwise it renders as a non-clickable",
+    "disabled control. The build REFUSES to publish and fails loudly if a ZIP named in",
+    "a release is missing, if the version string does not appear in its filename, or if",
+    "no listed release matches forgeExtensionVersion — that last guard stops anyone",
+    "deleting the older companion while the Forge listing still needs it. A failed",
+    "build leaves the previous deployment serving, so a mistake here cannot break the",
+    "live site."
   ],
-  "version": "0.67.1",
+
   "channel": "alpha",
-  "releaseDate": "2026-09-11",
-  "extensionVersion": "0.67.1",
-  "nodeMinimum": "22",
-  "platform": "Windows 10 / 11 (64-bit)",
-  "ruleset": "Fantasy Grounds Unity \u2014 5E",
-  "rulesetShort": "5E",
-  "companion": {
-    "status": "available",
-    "path": "downloads/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip",
-    "pendingLabel": "Companion download pending approval"
-  },
+
+  "forgeExtensionVersion": "0.67.1",
+  "_forgeExtensionVersion": [
+    "The version the public Forge listing delivers TODAY — not the newest build we have.",
+    "Confirmed 15 September 2026: Forge is still on 0.67.1 while 0.68.7 is staged here.",
+    "Change it only when the Forge listing actually serves the new extension."
+  ],
+
+  "releases": [
+    {
+      "version": "0.68.7",
+      "releaseDate": "2026-09-15",
+      "status": "available",
+      "path": "downloads/nerve/0.68.7-alpha/Nerve-Windows-Companion-0.68.7-alpha.zip",
+      "headline": "A substantial alpha update focused on safer live play, lower accidental AI usage, clearer setup, and more reliable Fantasy Grounds event handling.",
+      "improvements": [
+        ["Manual Work Mode", "Make native Fantasy Grounds bookkeeping changes without generating automatic AI cues. Deliberate Call Nerve requests stay available."],
+        ["Version safety", "The extension and companion now require an exact version match, and say which of the two needs updating."],
+        ["Cleaner rolls", "Table results and staged skill, ability-check and saving-throw messages settle into one follow-up instead of duplicate paid cues."],
+        ["Safer combat flow", "Attack and result stages settle together; completed native damage does not repeat or end the player's turn; remaining effect work stays available; and a final defeat preserves wounds, effects and roster entries until an explicit end-turn."],
+        ["Better continuity", "A confirmed current-room Story context can survive combat and a session resume without repinning."],
+        ["Safer recovery", "Stale decisions are rejected without duplicate actions, and a claimed provider or listener failure is closed out cleanly rather than resubmitted as another possibly billed request."],
+        ["Clearer controls and installation", "Session and AI controls are easier to read, and the custom-app configuration launcher is now installed correctly."]
+      ]
+    },
+    {
+      "version": "0.67.1",
+      "releaseDate": "2026-09-11",
+      "status": "available",
+      "path": "downloads/nerve/0.67.1-alpha/Nerve-Windows-Companion-0.67.1-alpha.zip",
+      "headline": "The first publicly published companion, paired with the 0.67.1 Forge extension.",
+      "improvements": []
+    }
+  ],
+
   "forge": {
     "status": "available",
     "url": "https://forge.fantasygrounds.com/shop/items/3596/view",
-    "itemName": "Nerve \u2014 AI-Assisted Play (Free Alpha)",
+    "itemName": "Nerve — AI-Assisted Play (Free Alpha)",
     "pendingLabel": "Forge release pending",
     "installVerified": false,
     "_installVerified": [
@@ -48,9 +88,15 @@
       "but a signed-in acquisition plus a Fantasy Grounds updater installation has NOT been",
       "run end to end yet. While this is false the site says so plainly and does not claim",
       "Forge installation has been validated. Set it to true only once that test has actually",
-      "passed \u2014 it removes the caveat from the downloads and setup pages."
+      "passed — it removes the caveat from the downloads and setup pages."
     ]
   },
+
+  "platform": "Windows 10 / 11 (64-bit)",
+  "nodeMinimum": "22",
+  "ruleset": "Fantasy Grounds Unity — 5E",
+  "rulesetShort": "5E",
+
   "community": {
     "forumUrl": "https://www.fantasygrounds.com/forums/showthread.php?88108",
     "_comment": [
@@ -60,6 +106,7 @@
       "out of public posts. Email stays available for private reports."
     ]
   },
+
   "feedback": {
     "formEnabled": false,
     "_comment": [
@@ -69,6 +116,7 @@
       "hides the form entirely and offers the forum and email routes instead."
     ]
   },
+
   "support": {
     "url": "https://forge.fantasygrounds.com/shop/items/3596/view",
     "label": "Support Nerve on Forge",
@@ -79,6 +127,7 @@
       "longer used for Nerve; any studio-wide support page is a separate matter."
     ]
   },
+
   "contact": {
     "studioEmail": "backchannelstudios1@gmail.com"
   }
