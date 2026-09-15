@@ -893,6 +893,87 @@ table.data tr:last-child th, table.data tr:last-child td { border-bottom: 0; }
 .status--available { color: var(--ok); border-color: #2c5b41; }
 .status--available::before { background: var(--ok); }
 
+/* Release-card states. "current" is the one that pairs with the extension the
+   Forge serves today; "staged" is published but must not be installed yet;
+   "previous" is kept for rollback. The colours have to read differently at a
+   glance, because picking the wrong one is the mistake this page exists to stop. */
+.status--current { color: var(--ok); border-color: #2c5b41; }
+.status--current::before { background: var(--ok); }
+.status--staged { color: var(--warn); border-color: var(--gold-dim); }
+.status--staged::before { background: var(--warn); }
+.status--previous { color: var(--text-faint); border-color: var(--line); }
+.status--previous::before { background: var(--text-faint); }
+
+/* ---------- release cards ---------- */
+.release-card {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg-card);
+  padding: 26px 28px 28px;
+  margin: 0 0 28px;
+}
+.release-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-bottom: 14px;
+}
+.release-head h3 { margin: 0; }
+.release-headline { color: var(--text-dim); margin: 0 0 4px; max-width: 68ch; }
+.release-card .meta-list { margin: 22px 0; }
+.meta-list--tight > div { padding: 14px 18px; }
+.release-card .callout { margin: 20px 0; }
+
+.checksum-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+  margin: 20px 0 0;
+}
+.checksum-line .checksum-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.checksum-line code {
+  font-size: 0.8rem;
+  /* A 64-character digest must never push the page sideways on a phone. */
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.improvements-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin: 28px 0 12px;
+}
+.tick-list { margin: 0; padding-left: 0; list-style: none; }
+.tick-list li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 10px;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+.tick-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+.tick-list li strong { color: var(--text); }
+
 /* ---------- explore / limitation lists ---------- */
 .split {
   display: grid;
