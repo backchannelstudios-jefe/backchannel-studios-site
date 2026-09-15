@@ -1,11 +1,20 @@
 # Nerve site — implementation handoff
 
-Built against **Nerve Alpha Website — Development Requirements** (10 September 2026) and the
-**Nerve website review** (11 September 2026). Current release: **0.67.1 (alpha)**.
+Built against **Nerve Alpha Website — Development Requirements** (10 September 2026), the
+**Nerve website review** (11 September 2026) and the **0.68.7 developer handoff**
+(15 September 2026).
 
-**Both halves are published.** The Forge listing is public
-([item 3596](https://forge.fantasygrounds.com/shop/items/3596/view)) and the Windows companion
-downloads from this site. Nerve needs both, so neither control replaces the other.
+**Two companions are published: 0.68.7 and 0.67.1.** The Forge listing is public
+([item 3596](https://forge.fantasygrounds.com/shop/items/3596/view)) and both companions download
+from this site at their own permanent addresses. Nerve needs both halves, so no control replaces
+another.
+
+**The extension and the companion must be the same version**, and the site treats that as a rule
+rather than advice. `forgeExtensionVersion` in `nerve/release.json` holds the version the Forge
+listing actually delivers — **0.67.1 today** — and every card label, warning and button style is
+derived from it. While 0.68.7 sits ahead of the listing it is labelled for the upcoming update
+and tells people not to install it yet; 0.67.1 is the Forge match and carries the primary button.
+Section 3 explains how that moves on Forge release day.
 
 **What being listed does not mean.** A signed-in acquisition plus an install through the Fantasy
 Grounds updater has not been run end to end. `forge.installVerified` in `nerve/release.json` is
@@ -22,14 +31,14 @@ or permission from SmiteWorks, and `npm run check` fails the build if any page s
 | --- | --- |
 | `/nerve` | Product overview — alpha label, value statement, requirements, how the three pieces fit together, what testers can explore, known limitations, privacy summary |
 | `/nerve/setup` | Ten-step ordered install, update paths, developer-preview migration, troubleshooting table |
-| `/nerve/downloads` | Prerequisites, current release metadata, companion + checksum + Forge controls, the forum route, previous releases |
+| `/nerve/downloads` | Prerequisites, the version-match rule, one card per published companion (download, checksum, digest, what improved), the Forge control, the forum route, rollback notes |
 | `/nerve/releases` | Version pairing table, per-release known issues, update instructions |
 | `/nerve/privacy` | Product data flow and website data collection, kept strictly apart |
 | `/nerve/feedback` | Two report routes — the public forum thread and private email — with a shared what-to-include checklist and a redaction warning on the public one. The in-page form is built but hidden until it has a destination |
-| `downloads/nerve/<ver>/` | The published companion ZIP and its generated `.sha256` sidecar |
+| `downloads/nerve/<ver>/` | One folder per published companion — the ZIP and its generated `.sha256` sidecar. Nothing here is ever overwritten |
 | `drafts/` | Unpublished work — currently the Terms draft. Redirected away, robots-disallowed |
 | `/api/feedback` | Vercel serverless intake for the form |
-| `nerve/release.json` | Single source of truth for every version, filename, checksum and link |
+| `nerve/release.json` | Single source of truth: the list of releases, and `forgeExtensionVersion` — the version the Forge listing delivers, which decides every card's wording |
 | `tools/*.mjs` | Release stamper, pre-publication checker, endpoint test suite |
 | `assets/*`, `favicon.ico` | Logo derivatives, Nerve artwork, social previews |
 
@@ -56,50 +65,75 @@ dashboard. Nothing about this change makes rollback harder.
 
 ---
 
-## 3. Publishing a new companion build — three steps
+## 3. Publishing a new companion build
 
-Never type a version number, a file size or a checksum into an HTML file. Everything comes from
-**`nerve/release.json`**.
+Never type a version number, a file size or a checksum into an HTML file, and never edit a
+release card by hand. Everything comes from **`nerve/release.json`**.
 
 1. **Upload the ZIP** to `downloads/nerve/<version>-<channel>/` on GitHub.
    Always a new folder. Never replace a file at a path that has already been published — people
-   may have linked to it, and a changed file under an old URL breaks checksum verification.
-2. **Edit four fields** in `nerve/release.json`: `version`, `channel`, `releaseDate`, and
-   `companion.path` (pointing at the file you just uploaded).
-3. **Commit.** Done.
+   may have linked to it, and a changed file under an old URL breaks checksum verification for
+   everyone who noted the old digest.
+2. **Add an entry at the top of `releases`** in `nerve/release.json`: `version`, `releaseDate`,
+   `status`, `path`, a one-line `headline`, and the `improvements` pairs you want listed.
+3. **Leave the older entries alone.** They stay downloadable for as long as anyone is running the
+   extension that pairs with them.
+4. **Add a card** for the new version on `/nerve/downloads` — copy an existing
+   `<article data-rel-release="…">` block and change only the version in that one attribute. Every
+   value inside it is filled in at build time.
+5. **Commit.**
 
-On deploy, `npm run build` opens the ZIP and works out the rest itself:
+On deploy, `npm run build` opens each ZIP and works out the rest itself:
 
-| Derived automatically | From |
+| Derived per release | From |
 | --- | --- |
 | SHA-256 digest | hashing the actual ZIP in the repo |
-| File size, and its label (`1.19 MB`) | the real byte length |
-| Download URL and filename | `companion.path` |
-| The `.sha256` sidecar file | written next to the ZIP |
-| `0.67.1 (alpha)` version label | `version` + `channel` |
-| `Nerve Adapter v0.67.1 loaded.` | `extensionVersion` |
-| `11 September 2026` date | `releaseDate` |
+| File size, and its label (`1.23 MB`) | the real byte length |
+| Download URL, filename, checksum URL | that release's `path` |
+| The `.sha256` sidecar file | written next to that ZIP |
+| `0.68.7 (alpha)` version label | `version` + `channel` |
+| `Nerve Adapter v0.68.7` | `version` |
+| `15 September 2026` date | `releaseDate` |
+| Card status, warning, button style | comparing `version` to `forgeExtensionVersion` |
 
-Because the digest is taken from the same bytes Vercel serves, **the published checksum cannot
-drift from the published file.** `npm run check` re-verifies this independently and fails if the
-number on the page, the sidecar and the file ever disagree — I tested that guard by deliberately
-corrupting each one.
+Because every digest is taken from the same bytes Vercel serves, **a published checksum cannot
+drift from its published file.** `npm run check` re-verifies this independently, per release, and
+fails if the number on a card, its sidecar and its file ever disagree.
 
-The build refuses to publish, and fails the deploy, if the ZIP is missing, if the version string
-does not appear in the filename (the classic "new build, forgot the version bump"), or if a
-status is `available` without what that status requires. A failed build leaves the previous
-deployment serving, so a mistake here cannot take the site down.
+The build refuses to publish, and fails the deploy, if a ZIP is missing, if a version string does
+not appear in its own filename (the classic "new build, forgot the version bump"), if two
+releases are byte-identical, or if **no listed release matches `forgeExtensionVersion`** — that
+last one is what stops anyone deleting the old companion while the Forge listing still needs it.
+A failed build leaves the previous deployment serving, so a mistake here cannot take the site
+down.
 
-**To unpublish**, set `companion.status` back to `"pending"`. The download reverts to a
-non-clickable disabled control and the pages round-trip byte-for-byte.
+**To unpublish** a release, set its `status` back to `"pending"`. Its download reverts to a
+non-clickable disabled control.
 
-**The Forge item is live** — `forge.status` is `"available"` and `forge.url` holds the published
-item. Setting it back to `"pending"` restores the release-preview copy byte-for-byte; the pending
-text is kept in the pages, hidden, precisely so that round trip stays lossless.
+### Forge release day — the one string that moves
 
-**The one flag left to flip** is `forge.installVerified`. Set it to `true` after acquiring the
-listing while signed in and installing through the Fantasy Grounds updater on a clean profile.
-That removes the caveat from the downloads and setup pages and nothing else.
+When the Forge listing actually starts delivering a new extension, change
+`forgeExtensionVersion` to that version. Nothing else. That single edit:
+
+- relabels the new card from *Available for the upcoming Forge X update* to *Current / recommended*
+- relabels the old card to *Previous version / rollback archive*
+- removes the "don't install this yet" warning from the new one and puts a "don't mix versions"
+  warning on the old one
+- moves the primary download button onto the version that now pairs with the extension
+- updates the adapter string quoted on the overview, setup and releases pages
+
+I tested that flip in both directions; it round-trips byte-for-byte.
+
+**Do not move it ahead of the Forge listing to make the site look current.** The entire point is
+that nobody downloads a companion their extension cannot pair with. `npm run check` enforces the
+consequences: exactly one published release may be the match, a newer one must carry its
+don't-install-yet warning, and neither a staged nor a superseded release may be called
+recommended.
+
+**The flag left to flip separately** is `forge.installVerified`. Set it to `true` after acquiring
+the listing while signed in and installing through the Fantasy Grounds updater on a clean
+profile. That removes the not-yet-proven caveat from the downloads and setup pages, and nothing
+else.
 
 ## 3b. The external destinations
 
@@ -150,7 +184,11 @@ not be public is worse than no page. The draft now lives at
 
 `npm run verify` runs all three suites. Latest run, all green:
 
-**Release stamping** — 9 pages scanned. Round-trip tested pending → available → pending;
+**Release stamping** — 8 pages scanned. Two releases published, each hashed from its own bytes.
+Flipping `forgeExtensionVersion` between 0.67.1 and 0.68.7 and back produces byte-identical
+files, so the Forge-release-day change is reversible with one string.
+
+**Release stamping (original run)** — 9 pages scanned. Round-trip tested pending → available → pending;
 output is byte-identical, so nothing is lost by flipping status either way.
 
 **Pre-publication checks (`npm run check`)** — 8 pages, no problems:
@@ -160,7 +198,15 @@ output is byte-identical, so nothing is lost by flipping status either way.
   complete rules automation, SmiteWorks endorsement, **Forge listing described as SmiteWorks
   approval, certification or permission**, **donating implied to be required**, lifetime access,
   tax deductibility, premium support, "data never leaves your computer", DM replacement,
-  donation dashboard URL)
+  donation dashboard URL, **a measured percentage or dollar AI saving**)
+- **each release card shows its own digest**, matching its own sidecar and its own bytes, and
+  links to its own file — two cards sharing a checksum or a link would verify against the wrong
+  download and look perfectly fine
+- **no two published releases are byte-identical** (the sign a ZIP was copied, not rebuilt)
+- **exactly one published release matches `forgeExtensionVersion`**; anything newer carries its
+  don't-install-yet warning, anything older warns against mixing versions, and neither may be
+  called recommended
+- **no `.ext` file or submission bundle is linked** — the extension comes from the Forge
 - **the Forge, forum and support controls resolve to exactly the published item and thread**
 - **no Nerve page links to Buy Me a Coffee**
 - **no visible copy still calls the Forge listing pending** while `forge.status` is `available`
@@ -168,8 +214,14 @@ output is byte-identical, so nothing is lost by flipping status either way.
 - every page has a title, description, canonical, favicon, skip link, `lang`, one `<h1>`, and
   `alt` on every image
 
-Each of the four new guards was proven by deliberately breaking it — wrong item number, wrong
-thread id, a stale donation link, and "Approved by SmiteWorks" — and confirming the check failed.
+Every guard here was proven by deliberately breaking it and confirming the check failed: wrong
+item number, wrong thread id, a stale donation link, "Approved by SmiteWorks", a card showing the
+other release's digest, two identical ZIPs, a staged release with its warning removed, a staged
+release advertised as recommended, "Saves 40% on AI costs", and a link to a `.ext` file.
+
+**On the savings claim.** 0.68.7 genuinely cuts duplicate and bookkeeping cues, so fewer requests
+are sent. How much that saves depends on provider, model, play style and retries, so the site
+says that rather than a number, and the checker keeps it that way.
 
 **Endpoint tests (`npm run test:feedback`)** — 21 assertions, all passing:
 - GET rejected; missing/invalid fields rejected with a message naming them
@@ -206,8 +258,8 @@ delivery, and clean-profile public installation. The pages state these are still
 | 2 | Alpha status and all prerequisites visible before download | ✅ overview, downloads and setup all list all six |
 | 3 | Free access independent of donations or registration | ✅ stated on overview and terms |
 | 4 | Support link correct, no dashboard URL, no invented donation endpoint | ✅ Nerve support goes to the Forge listing; `npm run check` fails on a Buy Me a Coffee link on any Nerve page |
-| 5 | Hosted download succeeds and SHA-256 matches | ✅ served ZIP, sidecar and page value all hash to `23de585d…`, verified against the live site |
-| 6 | Every displayed version matches the approved release | ✅ all generated from `release.json` |
+| 5 | Hosted download succeeds and SHA-256 matches | ✅ both releases verified against the live site: 0.68.7 → `613b3004…` (1,285,019 bytes), 0.67.1 → `23de585d…` (1,250,034 bytes); served bytes, sidecar and card value agree in each case |
+| 6 | Every displayed version matches the approved release | ✅ all generated from `release.json`; each card and release section is pinned to its own version so it cannot relabel itself |
 | 7 | Forge status truthful, no clickable placeholder | ✅ listing is live and linked; the untested-install caveat is stated, not glossed |
 | 8 | No submission bundle, internal notes, campaign data or credentials public | ✅ none present; downloads page says so |
 | 9 | Setup explains extension/runtime ownership and migration | ✅ |
