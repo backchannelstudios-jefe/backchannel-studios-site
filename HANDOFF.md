@@ -280,3 +280,32 @@ npm run test:feedback  # 21 endpoint assertions, no network calls
 npm run verify         # all three
 npm run dev            # serve locally
 ```
+
+## 8. Brush Pass section (`/brushpass`, `/brushpass/playtest`)
+
+Added 16 September 2026. Two pages that recruit playtesters for the Google Play closed test,
+driven by **`brushpass/program.json`** exactly the way `nerve/release.json` drives the Nerve
+pages. `npm run build` runs `tools/apply-brushpass.mjs` after the release stamper; it rewrites
+`data-bp` (values), `data-bp-href` (link targets) and `data-bp-when` (show/hide) inside
+`brushpass/` only. Never edit a URL inside those HTML files.
+
+The three fields that will actually change:
+
+- **`signup.formUrl`** — the Google Form. It is `""` until the form exists; every sign-up
+  control then falls back to the email route (`signup.email`, with `signup.emailSubject`
+  pre-filled) and the copy says so. Paste the `forms.gle` or `docs.google.com/forms` URL,
+  run `npm run build`, commit. The build refuses any other host, and `npm run check` fails
+  if a visible sign-up control does not point at that exact URL.
+- **`discord.inviteUrl`** — the invite. `check` fails if any Discord control on a Brush Pass
+  page points anywhere else.
+- **`stage`** — `closed-testing` today. Set `open-testing` or `production` on release day and
+  fill `play.listingUrl`; the badge, the "Where it stands" callout and the "Get it on Google
+  Play" button all follow from that. `play.optInUrl` is deliberately empty during closed
+  testing: the link only works for accounts already on the tester lists, so it is sent by
+  email after a volunteer is added.
+
+`npm run check` also refuses wording on these pages that describes testing as paid or
+compensated, promises free in-game credits, or invites tester swapping — Google's engagement
+review looks for exactly that, and it would put the release at risk.
+
+Flipping `formUrl` between `""` and a URL round-trips byte-for-byte (verified).

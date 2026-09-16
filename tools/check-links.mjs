@@ -433,6 +433,90 @@ if (rel.forge?.status === "available") {
   }
 }
 
+/* ---------- Brush Pass pages ----------
+   brushpass/program.json drives every external link on these pages, so the check
+   is that the pages agree with it exactly: the Discord control lands on the one
+   invite, the sign-up control is either the real form or hidden, and the visible
+   copy matches which of the two sign-up routes is live. The pages also recruit
+   for a Google Play closed test, so nothing may describe testing as paid, or
+   invite the tester-swap behaviour Google's engagement review looks for. */
+{
+  const cfg = JSON.parse(await readFile(join(ROOT, "brushpass", "program.json"), "utf8"));
+  const formLive = /^https:\/\/\S+$/.test(cfg.signup?.formUrl || "");
+  const discordUrl = cfg.discord?.inviteUrl || "";
+
+  const BP_FORBIDDEN = [
+    [/\bpaid\s+(play)?test(ing|ers?)?\b/i, "describes testing as paid"],
+    [/\b(get|be|are)\s+paid\b/i, "promises payment"],
+    [/\bcompensat(ed|ion)\b/i, "promises compensation"],
+    [/\bfree\s+credits?\b/i, "promises free in-game credits for testing"],
+    [/\b(approved|certified|endorsed|verified)\s+by\s+google\b/i, "describes the Play listing as Google endorsement"],
+    [/\bswap\s+(tests?|reviews?|installs?)\b|\btester[- ]swap\b/i, "invites tester swapping"],
+    [/\bguaranteed?\s+(a\s+)?(spot|place|invite)\b/i, "guarantees a tester place"]
+  ];
+
+  function visibleText(html) {
+    let out = html;
+    /* strip elements the build hid, with everything nested inside them */
+    const open = /<([a-z]+)([^>]*\sdata-bp-when="[^"]*"[^>]*\shidden(?=[\s>])[^>]*)>/i;
+    for (let guard = 0; guard < 500; guard++) {
+      const m = open.exec(out);
+      if (!m) break;
+      const tag = m[1];
+      const re = new RegExp(`</?${tag}\\b`, "gi");
+      re.lastIndex = m.index + m[0].length;
+      let depth = 1, end = out.length, hit;
+      while ((hit = re.exec(out))) {
+        depth += hit[0][1] === "/" ? -1 : 1;
+        if (depth === 0) { end = hit.index + tag.length + 3; break; }
+      }
+      out = out.slice(0, m.index) + " " + out.slice(end);
+    }
+    return out
+      .replace(/<a\b[^>]*\shidden(?=[\s>])[^>]*>[\s\S]*?<\/a>/gi, " ")
+      .replace(/<script[\s\S]*?<\/script>/g, " ")
+      .replace(/<style[\s\S]*?<\/style>/g, " ")
+      .replace(/<!--[\s\S]*?-->/g, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ");
+  }
+
+  for (const page of pages.filter((p) => p.startsWith("brushpass/"))) {
+    const html = await readFile(join(ROOT, page), "utf8");
+
+    for (const [, tag] of html.matchAll(/<a\s([^>]*\sdata-bp-href="([^"]*)"[^>]*)>/g)) {
+      const kind = /\sdata-bp-href="([^"]*)"/.exec(tag)[1];
+      const href = /(?:^|\s)href="([^"]*)"/.exec(tag)?.[1] ?? "";
+      const hidden = /\shidden(?=[\s>]|$)/.test(tag);
+      if (kind === "discord" && href !== discordUrl) {
+        fail(page, `the Discord control points at "${href}", expected exactly "${discordUrl}"`);
+      }
+      if (kind === "signupForm") {
+        if (formLive && href !== cfg.signup.formUrl) fail(page, `the sign-up control points at "${href}", not at the form in program.json`);
+        if (!formLive && !hidden) fail(page, `no sign-up form is configured but a sign-up control is still visible: href="${href}"`);
+      }
+      if (kind === "email" && !href.startsWith(`mailto:${cfg.signup.email}`)) {
+        fail(page, `the email control points at "${href}", expected mailto:${cfg.signup.email}`);
+      }
+      if (/^https?:/.test(href) && !/\srel="noopener noreferrer"/.test(tag)) {
+        fail(page, `external link "${href}" is missing rel="noopener noreferrer"`);
+      }
+    }
+
+    const text = visibleText(html);
+    for (const [re, why] of BP_FORBIDDEN) {
+      const hit = re.exec(text);
+      if (hit) fail(page, `prohibited wording (${why}): "${hit[0].trim()}"`);
+    }
+    if (formLive && /email us to volunteer/i.test(text)) {
+      fail(page, "the sign-up form is live but the page still shows the email-only route");
+    }
+    if (!formLive && /sign-up form/i.test(text)) {
+      fail(page, "no sign-up form is configured but the page still mentions one — run npm run build");
+    }
+  }
+}
+
 /* ---------- report ---------- */
 for (const w of warnings) console.log("  ⚠  " + w);
 if (failures.length) {

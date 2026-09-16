@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "npx serve .",
-    "build": "node tools/apply-release.mjs",
+    "build": "node tools/apply-release.mjs && node tools/apply-brushpass.mjs",
     "check": "node tools/check-links.mjs",
     "test:feedback": "node tools/test-feedback.mjs",
     "verify": "npm run build && npm run check && npm run test:feedback"

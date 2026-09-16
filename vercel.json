@@ -57,6 +57,31 @@
       "source": "/nerve/support",
       "destination": "/nerve/feedback",
       "permanent": false
+    },
+    {
+      "source": "/brushpass/index.html",
+      "destination": "/brushpass",
+      "permanent": true
+    },
+    {
+      "source": "/brushpass/program.json",
+      "destination": "/brushpass",
+      "permanent": false
+    },
+    {
+      "source": "/brush-pass/:path*",
+      "destination": "/brushpass/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/playtest",
+      "destination": "/brushpass/playtest",
+      "permanent": false
+    },
+    {
+      "source": "/brushpass/(volunteer|signup|sign-up|test|testing|beta|alpha)",
+      "destination": "/brushpass/playtest",
+      "permanent": false
     }
   ],
   "headers": [

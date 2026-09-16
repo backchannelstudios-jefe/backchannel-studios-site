@@ -1214,3 +1214,12 @@ button.btn[disabled] { opacity: 0.55; cursor: progress; }
   .steps > li { padding-left: 54px; }
   .actions .btn, .actions .btn-disabled { width: 100%; justify-content: center; }
 }
+
+/* ============================================================
+   Brush Pass section
+   ============================================================ */
+
+/* The build toggles `hidden` on elements that carry their own display
+   rule (.btn, .actions). The attribute has to win, or a control the
+   build meant to hide would still render. */
+[hidden] { display: none !important; }
