@@ -62,7 +62,7 @@ function say(text) {
   if (!soundOn || !canSpeak || !text) return Promise.resolve();
   return new Promise((resolve) => {
     const spoken = text.replace(/\bUSSR\b/g, "U S S R").replace(/\bNORAD\b/g, "NORE AD").replace(/\bJOSHUA\b/g, "Joshua")
-      .replace(/\bWOPR\b/g, "whopper").replace(/\bDEFCON\b/g, "def con").toLowerCase();
+      .replace(/\bWOPR\b/g, "whopper").replace(/\bFALKEN/g, "FALLKEN").replace(/\bDEFCON\b/g, "def con").toLowerCase();
     const u = new SpeechSynthesisUtterance(spoken);
     if (voice) u.voice = voice;
     const fred = voice && /^Fred\b/i.test(voice.name);
