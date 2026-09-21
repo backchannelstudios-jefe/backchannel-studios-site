@@ -1223,3 +1223,6 @@ button.btn[disabled] { opacity: 0.55; cursor: progress; }
    rule (.btn, .actions). The attribute has to win, or a control the
    build meant to hide would still render. */
 [hidden] { display: none !important; }
+
+/* A line in the homepage footer. Not a link, on purpose. */
+.wopr-hint { margin-left: .75em; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .85em; letter-spacing: .02em; cursor: default; user-select: none; }

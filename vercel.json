@@ -82,9 +82,28 @@
       "source": "/brushpass/(volunteer|signup|sign-up|test|testing|beta|alpha)",
       "destination": "/brushpass/playtest",
       "permanent": false
+    },
+    {
+      "source": "/wopr/index.html",
+      "destination": "/wopr",
+      "permanent": true
+    },
+    {
+      "source": "/(joshua|Joshua|JOSHUA|WOPR|Wopr)",
+      "destination": "/wopr",
+      "permanent": false
     }
   ],
   "headers": [
+    {
+      "source": "/wopr(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
     {
       "source": "/downloads/(.*)",
       "headers": [

@@ -45,4 +45,30 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("[data-year]").forEach((el) => {
     el.textContent = new Date().getFullYear();
   });
+
+  // Shall we play a game? Typing a certain name (or the Konami code) anywhere on the
+  // site opens a terminal. Tapping the footer line three times does the same on a phone.
+  const door = () => {
+    document.body.style.transition = "opacity .35s";
+    document.body.style.opacity = "0";
+    setTimeout(() => { window.location.href = "/wopr#joshua"; }, 380);
+  };
+  const secrets = ["joshua", "ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba"];
+  let typed = "";
+  document.addEventListener("keydown", (e) => {
+    const t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    typed = (typed + (e.key.length === 1 ? e.key.toLowerCase() : e.key)).slice(-80);
+    if (secrets.some((s) => typed.endsWith(s))) { typed = ""; door(); }
+  });
+  const hint = document.querySelector("[data-wopr-hint]");
+  if (hint) {
+    let taps = 0, timer = null;
+    hint.addEventListener("click", () => {
+      taps++; clearTimeout(timer); timer = setTimeout(() => (taps = 0), 900);
+      if (taps >= 3) door();
+    });
+  }
+  if (window.console && console.log) console.log("%cLOGON: _", "font-family:monospace;color:#a8ecff;background:#02070a;padding:4px 8px");
 });

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>WOPR | Backchannel Studios</title>
+  <meta name="description" content="A terminal left running somewhere in the Backchannel Studios network. It would like to play a game." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://www.thebackchannel.studio/wopr" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/mark-32.png" />
+  <meta name="theme-color" content="#02070a" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/wopr/wopr.css" />
+</head>
+<body>
+  <a class="skip-link" href="#cmd">Skip to the command line</a>
+
+  <div class="crt" id="crt">
+    <header class="bar">
+      <h1 class="bar-title">WOPR <span class="bar-sub">War Operation Plan Response · remote terminal</span></h1>
+      <div class="bar-tools">
+        <button type="button" class="tool" id="sound" aria-pressed="false">VOICE: OFF</button>
+        <a class="tool" href="/">EXIT</a>
+      </div>
+    </header>
+
+    <div class="stage">
+    <main id="main" class="term">
+      <div id="log" class="log"></div>
+      <form id="line" class="line" autocomplete="off" hidden>
+        <label for="cmd" id="prompt" class="prompt">&gt;</label>
+        <input id="cmd" name="cmd" type="text" spellcheck="false" autocapitalize="characters" autocorrect="off" enterkeyhint="send" />
+      </form>
+    </main>
+
+    <!-- War room. Shown only while Global Thermonuclear War is running. -->
+    <section id="warroom" class="warroom" hidden aria-label="Global Thermonuclear War">
+      <div class="wr-top">
+        <div class="wr-stat"><span class="k">DEFCON</span> <span class="v" id="defcon">5</span></div>
+        <div class="wr-stat"><span class="k">SIDE</span> <span class="v" id="side">—</span></div>
+        <div class="wr-stat"><span class="k">SALVO</span> <span class="v" id="salvo">—</span></div>
+        <div class="wr-stat cas"><span class="k">US CASUALTIES</span> <span class="v" id="cas-us">0</span></div>
+        <div class="wr-stat cas"><span class="k">USSR CASUALTIES</span> <span class="v" id="cas-su">0</span></div>
+      </div>
+      <div class="wr-map">
+        <svg id="map" viewBox="80 10 900 250" preserveAspectRatio="xMidYMid meet" role="img" aria-label="World map showing targets and missile tracks">
+          <g id="grid" class="grid"></g>
+          <path id="land" class="land" d="" />
+          <path id="ussr" class="nation ussr" d="" />
+          <path id="usa" class="nation usa" d="" />
+          <g id="tracks"></g>
+          <g id="blasts"></g>
+          <g id="cities"></g>
+          <g id="overlay"></g>
+        </svg>
+        <div id="banner" class="banner" hidden></div>
+      </div>
+      <div class="wr-bottom">
+        <div class="wr-panel" id="panel">
+          <p class="wr-help" id="wr-help"></p>
+          <fieldset id="targets" class="targets" hidden>
+            <legend>SELECT TARGETS <span id="tcount"></span></legend>
+            <div id="tlist" class="tlist"></div>
+          </fieldset>
+          <div class="wr-actions" id="actions">
+            <button type="button" class="act launch" id="launch" hidden disabled>LAUNCH</button>
+            <button type="button" class="act" id="standdown" hidden>STAND DOWN</button>
+            <button type="button" class="act" id="continue" hidden>CONTINUE</button>
+          </div>
+        </div>
+        <ol class="ticker" id="ticker" aria-live="polite"></ol>
+      </div>
+    </section>
+
+    <!-- Chess. Shown only while a game of chess is running. -->
+    <section id="chessroom" class="chessroom" hidden aria-label="Chess against Joshua">
+      <div class="cr-board-wrap">
+        <div id="board" class="board" role="group" aria-label="Chessboard"></div>
+      </div>
+      <div class="cr-side">
+        <p id="cr-status" class="cr-status"></p>
+        <p id="cr-joshua" class="cr-joshua" aria-live="polite"></p>
+        <form id="cr-form" class="cr-form" autocomplete="off">
+          <label for="cr-move">YOUR MOVE:</label>
+          <input id="cr-move" type="text" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="send" placeholder="e4, Nf3, e2e4" />
+        </form>
+        <div class="cr-actions">
+          <button type="button" class="act" id="cr-draw">OFFER DRAW</button>
+          <button type="button" class="act" id="cr-resign">RESIGN</button>
+        </div>
+        <ol id="cr-moves" class="cr-moves" aria-label="Moves"></ol>
+      </div>
+    </section>
+    </div>
+  </div>
+  <div id="sr" class="sr-only" aria-live="polite"></div>
+
+  <noscript><p class="noscript">THIS TERMINAL REQUIRES JAVASCRIPT. CONNECTION TERMINATED.</p></noscript>
+  <script type="module" src="/wopr/wopr.js"></script>
+</body>
+</html>
