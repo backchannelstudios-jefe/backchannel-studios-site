@@ -114,7 +114,7 @@
 
       <h3>Relationship to Fantasy Grounds</h3>
       <ul>
-        <li>Nerve is a Backchannel Studios product.</li>
+        <li>Nerve is a product of Backchannel Studios LLC.</li>
         <li>Fantasy Grounds and the Forge are operated by SmiteWorks. <strong>SmiteWorks has not endorsed, certified or sponsored Nerve</strong>, and nothing on this site should be read as implying that it has.</li>
         <li>Your use of Fantasy Grounds, the Forge and any licensed content remains governed by their own terms.</li>
       </ul>
@@ -130,7 +130,7 @@
           <li><strong>Feedback licence</strong> — what rights, if any, we take in submitted suggestions.</li>
           <li><strong>Warranty disclaimer and limitation of liability.</strong></li>
           <li><strong>Acceptable use and termination.</strong></li>
-          <li><strong>Governing law and the legal entity behind Backchannel Studios.</strong></li>
+          <li><strong>Governing law</strong> — the legal entity is Backchannel Studios LLC; the governing state and any registered address still need owner wording.</li>
           <li><strong>How and when these terms can change</strong>, and how testers are told.</li>
         </ul>
         <p>
@@ -149,7 +149,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <span>© <span data-year>2026</span> Backchannel Studios. All rights reserved.</span>
+      <span>© <span data-year>2026</span> Backchannel Studios LLC. All rights reserved.</span>
       <nav aria-label="Footer">
         <a href="/nerve/privacy">Privacy</a>
           <a href="mailto:backchannelstudios1@gmail.com">backchannelstudios1@gmail.com</a>
