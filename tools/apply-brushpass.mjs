@@ -13,12 +13,12 @@
 
      <tag data-bp="dotted.key">…</tag>
          → the value from program.json (HTML-escaped)
-     <a data-bp-href="signupForm|discord|playOptIn|playListing|email">…</a>
+     <a data-bp-href="signupForm|discord|playOptIn|playListing|playPrivacy|email">…</a>
          → only the href is rewritten; contents stay as authored
      <tag data-bp-when="<condition>[:not]">…</tag>
          → `hidden` toggled by that condition. Conditions:
            signupForm, discord, playOptIn, playListing,
-           closedTesting, openTesting, production
+           closedTesting, openTesting, production, iosComingSoon
 
    A link whose target is not published yet is never left pointing
    at a placeholder: the element carrying data-bp-href is hidden,
@@ -60,7 +60,8 @@ const urlField = (path, value, opts = {}) => {
 urlField("signup.formUrl", cfg.signup?.formUrl, { host: ["https://docs.google.com/forms/", "https://forms.gle/"] });
 urlField("discord.inviteUrl", cfg.discord?.inviteUrl, { host: ["https://discord.gg/", "https://discord.com/invite/"] });
 urlField("play.optInUrl", cfg.play?.optInUrl, { host: ["https://play.google.com/"] });
-urlField("play.listingUrl", cfg.play?.listingUrl, { host: ["https://play.google.com/"] });
+urlField("play.listingUrl", cfg.play?.listingUrl, { host: ["https://play.google.com/store/apps/details?id="] });
+urlField("play.privacyUrl", cfg.play?.privacyUrl);
 
 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cfg.signup?.email || "")) fail("signup.email must be an email address");
 
@@ -68,6 +69,12 @@ if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cfg.signup?.email || "")) fail("signup.em
    words describe. They must never appear in a URL we publish. */
 if (/emulator|tester[- ]?swap|exchange/i.test(JSON.stringify(cfg))) {
   fail("program.json mentions emulators or tester swapping — recruit real players only");
+}
+
+/* A public page needs the real store link. The "Get it on Google Play" controls are
+   the site's own text buttons; no Google badge or logo artwork is used. */
+if (cfg.stage !== "closed-testing" && !isHttps(cfg.play?.listingUrl)) {
+  fail(`stage "${cfg.stage}" needs play.listingUrl`);
 }
 
 if (problems.length) {
@@ -82,11 +89,11 @@ if (problems.length) {
 const stageLabel = {
   "closed-testing": "Closed alpha",
   "open-testing": "Open beta",
-  "production": "Available now"
+  "production": "Out now"
 }[cfg.stage];
 
 const mailto =
-  `mailto:${cfg.signup.email}?subject=${encodeURIComponent(cfg.signup.emailSubject || "Brush Pass playtest volunteer")}`;
+  `mailto:${cfg.signup.email}?subject=${encodeURIComponent(cfg.signup.emailSubject || "Brush Pass")}`;
 
 const data = {
   ...cfg,
@@ -101,7 +108,8 @@ const CONDITION = {
   playListing: isHttps(cfg.play?.listingUrl),
   closedTesting: cfg.stage === "closed-testing",
   openTesting: cfg.stage === "open-testing",
-  production: cfg.stage === "production"
+  production: cfg.stage === "production",
+  iosComingSoon: cfg.ios?.status === "coming-soon"
 };
 
 const HREF = {
@@ -109,6 +117,7 @@ const HREF = {
   discord: CONDITION.discord ? cfg.discord.inviteUrl : "",
   playOptIn: CONDITION.playOptIn ? cfg.play.optInUrl : "",
   playListing: CONDITION.playListing ? cfg.play.listingUrl : "",
+  playPrivacy: isHttps(cfg.play?.privacyUrl) ? cfg.play.privacyUrl : "",
   email: mailto
 };
 
@@ -119,7 +128,7 @@ const dig = (obj, path) => path.split(".").reduce((o, k) => (o == null ? o : o[k
 const stripHidden = (attrs) => attrs.replace(/\shidden(="[^"]*")?(?=\s|$)/g, "");
 
 const RE_VAL = /<([a-z]+)([^>]*\sdata-bp="([a-zA-Z0-9._-]+)"[^>]*)>([\s\S]*?)<\/\1>/g;
-const RE_HREF = /<a([^>]*\sdata-bp-href="(signupForm|discord|playOptIn|playListing|email)"[^>]*)>/g;
+const RE_HREF = /<a([^>]*\sdata-bp-href="(signupForm|discord|playOptIn|playListing|playPrivacy|email)"[^>]*)>/g;
 const RE_WHEN = new RegExp(`<([a-z]+)([^>]*\\sdata-bp-when="(${Object.keys(CONDITION).join("|")})(:not)?"[^>]*)>`, "g");
 
 function apply(html) {
@@ -153,6 +162,10 @@ function apply(html) {
 
 /* ---------- run ---------- */
 
+/* The store link appears on the home and projects pages too, so they are stamped from
+   the same record. Only data-bp attributes are touched in those files. */
+const EXTRA = ["index.html", "projects.html"].map((f) => join(ROOT, f));
+
 async function* walk(dir) {
   for (const e of await readdir(dir, { withFileTypes: true })) {
     const full = join(dir, e.name);
@@ -162,7 +175,9 @@ async function* walk(dir) {
 }
 
 let changed = 0, checked = 0;
-for await (const file of walk(DIR)) {
+const files = [];
+for await (const file of walk(DIR)) files.push(file);
+for (const file of [...files, ...EXTRA]) {
   const before = await readFile(file, "utf8");
   const after = apply(before);
   checked++;
@@ -174,7 +189,6 @@ for await (const file of walk(DIR)) {
 }
 
 console.log(
-  `  brush pass: stage ${cfg.stage}, sign-up form ${CONDITION.signupForm ? "live" : "not set — email route shown"}, ` +
-  `discord ${CONDITION.discord ? "live" : "not set"}, ` +
-  `play opt-in ${CONDITION.playOptIn ? "live" : "not set"}; ${checked} page(s) checked, ${changed} updated`
+  `  brush pass: stage ${cfg.stage}, play listing ${CONDITION.playListing ? "live" : "not set"}, ` +
+  `discord ${CONDITION.discord ? "live" : "not set"}; ${checked} page(s) checked, ${changed} updated`
 );

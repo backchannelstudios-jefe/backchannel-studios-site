@@ -1,29 +1,28 @@
 {
   "_comment": [
-    "Single source of truth for the Brush Pass pages. `npm run build` stamps these values",
+    "Single source of truth for the Brush Pass page. `npm run build` stamps these values",
     "into every element marked data-bp / data-bp-href / data-bp-when, the same way",
     "nerve/release.json drives the Nerve pages. Never edit a URL inside an HTML file.",
     "",
-    "signup.formUrl  — the Google Form volunteers fill in. Leave it \"\" until the form",
-    "                  exists: every sign-up button then falls back to the email route",
-    "                  and the pages say so. Fill it in and rebuild; nothing else changes.",
-    "play.optInUrl   — the Google Play closed-testing opt-in link. Deliberately \"\":",
-    "                  a tester has to be on the tester lists BEFORE the link works, so",
-    "                  publishing it here would only produce a page of 'not available'.",
-    "                  Fill it in on the day the app is in open testing or production.",
-    "play.listingUrl — the public Play Store listing, once the app is out of closed testing.",
-    "stage           — closed-testing | open-testing | production. Changes the badge and",
-    "                  the wording of what a volunteer is signing up for."
+    "stage           — closed-testing | open-testing | production. Production since",
+    "                  19 October 2026, when Brush Pass went public on Google Play.",
+    "play.listingUrl — the public Play Store listing. Every 'Get it on Google Play' link",
+    "                  points here, and nowhere else. The build refuses a public stage",
+    "                  without it. The links are the site's own text buttons: no Google",
+    "                  badge or logo artwork is used, by Neal's decision on 19 Oct 2026.",
+    "ios.status      — 'coming-soon' shows 'iPhone version coming soon.' No date and",
+    "                  no App Store badge until there is a live App Store listing.",
+    "",
+    "Tester recruitment ended at launch: there is no sign-up form or opt-in link any",
+    "more, and /brushpass/playtest redirects to /brushpass."
   ],
 
-  "stage": "closed-testing",
+  "stage": "production",
   "platform": "Android",
 
   "signup": {
-    "formUrl": "",
-    "formLabel": "Volunteer to playtest",
     "email": "backchannelstudios1@gmail.com",
-    "emailSubject": "Brush Pass playtest volunteer"
+    "emailSubject": "Brush Pass"
   },
 
   "discord": {
@@ -32,13 +31,11 @@
   },
 
   "play": {
-    "optInUrl": "",
-    "listingUrl": ""
+    "listingUrl": "https://play.google.com/store/apps/details?id=com.backchannelstudios.brushpass",
+    "privacyUrl": "https://brushpass-edd56.web.app/privacy.html"
   },
 
-  "ask": {
-    "gameMinutes": "10",
-    "cadence": "one game a week",
-    "commitmentWeeks": "four"
+  "ios": {
+    "status": "coming-soon"
   }
 }

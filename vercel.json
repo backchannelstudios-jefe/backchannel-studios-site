@@ -75,12 +75,12 @@
     },
     {
       "source": "/playtest",
-      "destination": "/brushpass/playtest",
+      "destination": "/brushpass",
       "permanent": false
     },
     {
-      "source": "/brushpass/(volunteer|signup|sign-up|test|testing|beta|alpha)",
-      "destination": "/brushpass/playtest",
+      "source": "/brushpass/(playtest|volunteer|signup|sign-up|test|testing|beta|alpha)",
+      "destination": "/brushpass",
       "permanent": false
     },
     {

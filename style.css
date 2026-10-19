@@ -1226,3 +1226,18 @@ button.btn[disabled] { opacity: 0.55; cursor: progress; }
 
 /* A line in the homepage footer. Not a link, on purpose. */
 .wopr-hint { margin-left: .75em; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .85em; letter-spacing: .02em; cursor: default; user-select: none; }
+
+/* ---------- getting a released game ---------- */
+.get-game { margin-top: 26px; }
+.get-line { margin: 0 0 16px; color: var(--text); }
+.ios-line { margin: 14px 0 0; color: var(--text-dim); font-size: 0.95rem; }
+.project-card .store-line {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-dim);
+}
+.project-card .store-line a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

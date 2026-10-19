@@ -517,6 +517,62 @@ if (rel.forge?.status === "available") {
   }
 }
 
+/* ---------- Brush Pass is released ----------
+   Once program.json says the game is public, nothing anywhere may still recruit
+   testers or describe it as being tested, every Google Play link must be the one
+   listing, no Google badge or logo artwork is used (the store links are the site's
+   own text buttons), and the iPhone version is "coming soon" with no App Store link. */
+{
+  const cfg = JSON.parse(await readFile(join(ROOT, "brushpass", "program.json"), "utf8"));
+  const listing = cfg.play?.listingUrl || "";
+  const released = cfg.stage === "production";
+  const iosSoon = cfg.ios?.status === "coming-soon";
+
+  const text = (html) => html
+    .replace(/<([a-z]+)\b[^>]*\shidden(?=[\s>])[^>]*>[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/g, " ")
+    .replace(/<style[\s\S]*?<\/style>/g, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ");
+
+  /* The Brush Pass part of each page that features it. */
+  const sections = {
+    "brushpass/index.html": (h) => h,
+    "index.html": (h) => (h.match(/<article class="project-card">\s*<span class="tag">[^<]*<\/span>\s*<h3><span class="name">Brush Pass[\s\S]*?<\/article>/) || [""])[0],
+    "projects.html": (h) => (h.match(/<section id="brush-pass">[\s\S]*?<\/section>/) || [""])[0]
+  };
+  const TESTING = /\b(closed[- ](alpha|beta|testing|test)|open[- ](beta|testing)|alpha|beta|play-?test\w*|testers?|testing|volunteer\w*|opt-?in|sign[- ]?up|become a tester|join the test|coming soon to google play)\b/i;
+
+  if (released) {
+    for (const [page, pick] of Object.entries(sections)) {
+      if (!pages.includes(page)) { fail(page, "page is missing"); continue; }
+      const part = pick(await readFile(join(ROOT, page), "utf8"));
+      if (!part) { fail(page, "could not find the Brush Pass section — the release checks cannot run"); continue; }
+      const t = text(part);
+      const hit = TESTING.exec(t.replace(/iPhone version coming soon\./g, ""));
+      if (hit) fail(page, `Brush Pass is released but the copy still talks about testing: "${hit[0]}"`);
+      if (!part.includes(`href="${listing}"`)) fail(page, `no "Get it on Google Play" link to ${listing}`);
+      if (iosSoon && !/iPhone version coming soon\./.test(t)) fail(page, `missing "iPhone version coming soon."`);
+    }
+  }
+
+  for (const page of pages) {
+    const html = await readFile(join(ROOT, page), "utf8");
+    if (/href="\/brushpass\/playtest/.test(html)) fail(page, "links to the retired playtest page");
+    for (const [, href] of html.matchAll(/href="(https:\/\/play\.google\.com\/[^"]*)"/g)) {
+      if (href !== listing) fail(page, `Google Play link "${href}" is not the Brush Pass listing ${listing}`);
+    }
+    if (/<img\b[^>]*(google[-_]?play|play[-_]?badge|playstore|en_badge_web|app[-_]?store)/i.test(html)) {
+      fail(page, "uses store badge or logo artwork — the store links are text buttons by decision");
+    }
+    if (iosSoon && /apps\.apple\.com|download on the app store/i.test(html)) {
+      fail(page, "links to the App Store before there is a live iPhone listing");
+    }
+  }
+}
+
 /* ---------- report ---------- */
 for (const w of warnings) console.log("  ⚠  " + w);
 if (failures.length) {
