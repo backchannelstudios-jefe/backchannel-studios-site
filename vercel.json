@@ -74,6 +74,16 @@
       "permanent": false
     },
     {
+      "source": "/laurelstation/index.html",
+      "destination": "/laurelstation",
+      "permanent": true
+    },
+    {
+      "source": "/(laurel-station|laurel|laurel_station|LaurelStation)",
+      "destination": "/laurelstation",
+      "permanent": false
+    },
+    {
       "source": "/playtest",
       "destination": "/brushpass",
       "permanent": false

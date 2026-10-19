@@ -573,6 +573,40 @@ if (rel.forge?.status === "available") {
   }
 }
 
+/* ---------- Laurel Station (working title) ----------
+   The game's brief lists what must never appear on the site, in page source or alt
+   text. Neal chose "premise only" until the title is cleared, so the heroine, her
+   family, the bookshop and any real-world model for the town stay out too. */
+{
+  const LS_FORBIDDEN = [
+    [/\bKit\b|Wilder/, "names the heroine (premise only until the title is cleared)"],
+    [/Dog-?Eared|Edith|Nikolai|\bMatt\b/i, "names a character, the bookshop or the cat"],
+    [/Culpeper/i, "ties the town to a real place"],
+    [/\bCIA\b|intelligence|government|Wilton/i, "links the game to Neal's career or full name"],
+    [/Hallmark/i, "names a TV network or brand"],
+    [/™|&trade;|&#8482;|\(TM\)/i, "claims the title as a trademark before it is cleared"],
+    [/Opening Day|Episode\s*\d|Season\s*\d/i, "reveals episode titles or the season plan"],
+    [/\$\s*\d|subscription|per month|\/mo\b/i, "states prices or the subscription plan"],
+    [/coming soon|release date|\b20\d\d\b/i, "gives a release window or date"],
+    [/apps\.apple\.com|play\.google\.com|app store badge/i, "links a store listing that does not exist yet"]
+  ];
+  const lsPages = {
+    "laurelstation/index.html": (h) => h.replace(/<footer[\s\S]*?<\/footer>/, ""),
+    "index.html": (h) => (h.match(/<article class="project-card">\s*<span class="tag">[^<]*<\/span>\s*<h3><span class="name">Laurel Station[\s\S]*?<\/article>/) || [""])[0],
+    "projects.html": (h) => (h.match(/<section id="laurel-station">[\s\S]*?<\/section>/) || [""])[0]
+  };
+  for (const [page, pick] of Object.entries(lsPages)) {
+    if (!pages.includes(page)) { fail(page, "page is missing"); continue; }
+    const part = pick(await readFile(join(ROOT, page), "utf8"));
+    if (!part) { fail(page, "could not find the Laurel Station section"); continue; }
+    for (const [re, why] of LS_FORBIDDEN) {
+      const hit = re.exec(part);
+      if (hit) fail(page, `Laurel Station: ${why}: "${hit[0]}"`);
+    }
+    if (!/class="alpha-badge"[^>]*>\s*Working title/i.test(part)) fail(page, "Laurel Station must carry a visible \"Working title\" label");
+  }
+}
+
 /* ---------- report ---------- */
 for (const w of warnings) console.log("  ⚠  " + w);
 if (failures.length) {
