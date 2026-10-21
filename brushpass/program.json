@@ -12,6 +12,9 @@
     "                  badge or logo artwork is used, by Neal's decision on 19 Oct 2026.",
     "ios.status      — 'coming-soon' shows 'iPhone version coming soon.' No date and",
     "                  no App Store badge until there is a live App Store listing.",
+    "                  'testflight' (since 21 Oct 2026) shows the 'iPhone beta on",
+    "                  TestFlight' button, pointing at ios.testflightUrl — Apple's",
+    "                  public TestFlight link for the 'iPhone Testers' group.",
     "",
     "Tester recruitment ended at launch: there is no sign-up form or opt-in link any",
     "more, and /brushpass/playtest redirects to /brushpass."
@@ -36,6 +39,7 @@
   },
 
   "ios": {
-    "status": "coming-soon"
+    "status": "testflight",
+    "testflightUrl": "https://testflight.apple.com/join/ddmuqpWq"
   }
 }
