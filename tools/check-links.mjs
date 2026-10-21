@@ -530,7 +530,7 @@ if (rel.forge?.status === "available") {
   /* 21 Oct 2026: the iPhone app is a public TestFlight beta while Android is out
      now. The iPhone beta elements may say "beta"; nothing else may. */
   const iosBeta = cfg.ios?.status === "testflight" ? cfg.ios?.testflightUrl || "" : "";
-  const withoutIosBeta = (h) => h.replace(/<(a|p)\b[^>]*\sdata-bp-when="iosTestflight"[^>]*>[\s\S]*?<\/\1>/g, " ");
+  const withoutIosBeta = (h) => h.replace(/<(a|p|span)\b[^>]*\sdata-bp-when="iosTestflight"[^>]*>[\s\S]*?<\/\1>/g, " ");
 
   const text = (html) => html
     .replace(/<([a-z]+)\b[^>]*\shidden(?=[\s>])[^>]*>[\s\S]*?<\/\1>/gi, " ")
