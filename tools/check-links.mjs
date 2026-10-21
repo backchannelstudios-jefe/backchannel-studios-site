@@ -527,6 +527,10 @@ if (rel.forge?.status === "available") {
   const listing = cfg.play?.listingUrl || "";
   const released = cfg.stage === "production";
   const iosSoon = cfg.ios?.status === "coming-soon";
+  /* 21 Oct 2026: the iPhone app is a public TestFlight beta while Android is out
+     now. The iPhone beta elements may say "beta"; nothing else may. */
+  const iosBeta = cfg.ios?.status === "testflight" ? cfg.ios?.testflightUrl || "" : "";
+  const withoutIosBeta = (h) => h.replace(/<(a|p|span)\b[^>]*\sdata-bp-when="iosTestflight"[^>]*>[\s\S]*?<\/\1>/g, " ");
 
   const text = (html) => html
     .replace(/<([a-z]+)\b[^>]*\shidden(?=[\s>])[^>]*>[\s\S]*?<\/\1>/gi, " ")
@@ -551,10 +555,12 @@ if (rel.forge?.status === "available") {
       const part = pick(await readFile(join(ROOT, page), "utf8"));
       if (!part) { fail(page, "could not find the Brush Pass section — the release checks cannot run"); continue; }
       const t = text(part);
-      const hit = TESTING.exec(t.replace(/iPhone version coming soon\./g, ""));
+      const hit = TESTING.exec(text(withoutIosBeta(part)).replace(/iPhone version coming soon\./g, ""));
       if (hit) fail(page, `Brush Pass is released but the copy still talks about testing: "${hit[0]}"`);
       if (!part.includes(`href="${listing}"`)) fail(page, `no "Get it on Google Play" link to ${listing}`);
       if (iosSoon && !/iPhone version coming soon\./.test(t)) fail(page, `missing "iPhone version coming soon."`);
+      if (iosBeta && !part.includes(`href="${iosBeta}"`)) fail(page, `no iPhone TestFlight link to ${iosBeta}`);
+      if (iosBeta && !/TestFlight/.test(t)) fail(page, "the iPhone TestFlight line is not visible");
     }
   }
 

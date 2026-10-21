@@ -13,12 +13,12 @@
 
      <tag data-bp="dotted.key">…</tag>
          → the value from program.json (HTML-escaped)
-     <a data-bp-href="signupForm|discord|playOptIn|playListing|playPrivacy|email">…</a>
+     <a data-bp-href="signupForm|discord|playOptIn|playListing|playPrivacy|email|iosTestflight">…</a>
          → only the href is rewritten; contents stay as authored
      <tag data-bp-when="<condition>[:not]">…</tag>
          → `hidden` toggled by that condition. Conditions:
            signupForm, discord, playOptIn, playListing,
-           closedTesting, openTesting, production, iosComingSoon
+           closedTesting, openTesting, production, iosComingSoon, iosTestflight
 
    A link whose target is not published yet is never left pointing
    at a placeholder: the element carrying data-bp-href is hidden,
@@ -62,6 +62,13 @@ urlField("discord.inviteUrl", cfg.discord?.inviteUrl, { host: ["https://discord.
 urlField("play.optInUrl", cfg.play?.optInUrl, { host: ["https://play.google.com/"] });
 urlField("play.listingUrl", cfg.play?.listingUrl, { host: ["https://play.google.com/store/apps/details?id="] });
 urlField("play.privacyUrl", cfg.play?.privacyUrl);
+urlField("ios.testflightUrl", cfg.ios?.testflightUrl, { host: ["https://testflight.apple.com/join/"] });
+
+/* iPhone: "coming-soon" until there is something to install; "testflight" once the
+   public TestFlight link exists (21 Oct 2026, Neal: put the iPhone beta on the site). */
+const IOS_STATUSES = ["coming-soon", "testflight"];
+if (!IOS_STATUSES.includes(cfg.ios?.status)) fail(`ios.status must be one of ${IOS_STATUSES.join(", ")}, got "${cfg.ios?.status}"`);
+if (cfg.ios?.status === "testflight" && !isHttps(cfg.ios?.testflightUrl)) fail(`ios.status "testflight" needs ios.testflightUrl`);
 
 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cfg.signup?.email || "")) fail("signup.email must be an email address");
 
@@ -109,7 +116,8 @@ const CONDITION = {
   closedTesting: cfg.stage === "closed-testing",
   openTesting: cfg.stage === "open-testing",
   production: cfg.stage === "production",
-  iosComingSoon: cfg.ios?.status === "coming-soon"
+  iosComingSoon: cfg.ios?.status === "coming-soon",
+  iosTestflight: cfg.ios?.status === "testflight" && isHttps(cfg.ios?.testflightUrl)
 };
 
 const HREF = {
@@ -118,6 +126,7 @@ const HREF = {
   playOptIn: CONDITION.playOptIn ? cfg.play.optInUrl : "",
   playListing: CONDITION.playListing ? cfg.play.listingUrl : "",
   playPrivacy: isHttps(cfg.play?.privacyUrl) ? cfg.play.privacyUrl : "",
+  iosTestflight: CONDITION.iosTestflight ? cfg.ios.testflightUrl : "",
   email: mailto
 };
 
@@ -128,7 +137,7 @@ const dig = (obj, path) => path.split(".").reduce((o, k) => (o == null ? o : o[k
 const stripHidden = (attrs) => attrs.replace(/\shidden(="[^"]*")?(?=\s|$)/g, "");
 
 const RE_VAL = /<([a-z]+)([^>]*\sdata-bp="([a-zA-Z0-9._-]+)"[^>]*)>([\s\S]*?)<\/\1>/g;
-const RE_HREF = /<a([^>]*\sdata-bp-href="(signupForm|discord|playOptIn|playListing|playPrivacy|email)"[^>]*)>/g;
+const RE_HREF = /<a([^>]*\sdata-bp-href="(signupForm|discord|playOptIn|playListing|playPrivacy|email|iosTestflight)"[^>]*)>/g;
 const RE_WHEN = new RegExp(`<([a-z]+)([^>]*\\sdata-bp-when="(${Object.keys(CONDITION).join("|")})(:not)?"[^>]*)>`, "g");
 
 function apply(html) {
